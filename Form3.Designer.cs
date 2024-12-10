@@ -51,7 +51,7 @@
             // 
             listBox1.FormattingEnabled = true;
             listBox1.ItemHeight = 15;
-            listBox1.Items.AddRange(new object[] { "aaaaaaaaa" });
+            listBox1.Items.AddRange(new object[] { "NORMALEMENT LES POKEMONS ", "", "", "        ", "  S'AFFCIHE ICI" });
             listBox1.Location = new Point(102, 208);
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(259, 169);

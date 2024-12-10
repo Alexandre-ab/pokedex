@@ -130,7 +130,7 @@
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(115, 23);
             textBox2.TabIndex = 8;
-            textBox2.TextChanged += this.textBox2_TextChanged;
+            textBox2.TextChanged += this.textBox1_TextChanged;
             // 
             // textBox3
             // 
@@ -138,7 +138,7 @@
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(134, 23);
             textBox3.TabIndex = 9;
-            textBox3.TextChanged += this.textBox3_TextChanged;
+            textBox3.TextChanged += this.textBox1_TextChanged;
             // 
             // textBox4
             // 
@@ -146,7 +146,7 @@
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(118, 23);
             textBox4.TabIndex = 10;
-            textBox4.TextChanged += this.textBox4_TextChanged;
+            textBox4.TextChanged += this.textBox1_TextChanged;
             // 
             // textBox5
             // 
@@ -154,7 +154,7 @@
             textBox5.Name = "textBox5";
             textBox5.Size = new Size(127, 23);
             textBox5.TabIndex = 11;
-            textBox5.TextChanged += this.textBox5_TextChanged;
+            textBox5.TextChanged += this.textBox1_TextChanged;
             // 
             // textBox6
             // 
