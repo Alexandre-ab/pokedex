@@ -21,6 +21,7 @@ Pokédex : appli web qui affiche les 1 025 Pokémon (illustrations officielles),
 ## Équipe
 Antigravity (chef) délègue via T3 Code, Claude Code code, Codex teste.
 Mémoire : basic-memory, dossier `pokedex/`. Seul le chef la lit et l'écrit (règles dans le skill chef-t3).
+Antigravity, dans T3 Code : pour toute demande de travail sur ce projet, applique le skill `chef-t3`, même sans `$chef-t3`.
 - Codeur : app/, components/, lib/, store/, config ; jamais `tests/`.
 - Testeur : `tests/` uniquement ; il signale les bugs, il ne les corrige pas.
 - Un seul agent modifie les fichiers à la fois. Personne ne committe sans l'accord de l'humain.
