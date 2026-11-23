@@ -4,7 +4,7 @@ Pokédex : appli web qui affiche les 1 025 Pokémon (illustrations officielles),
 - Stack : Next.js (App Router) + React, Tailwind CSS, Zustand
 - Données : PokéAPI https://pokeapi.co/api/v2 (pas de clé)
 - Lancer : npm run dev → http://localhost:3000
-- Tester : npm test && npm run lint && npm run build
+- Tester : `npm test && npm run lint` (build seulement avant un déploiement)
 - Tickets : GitHub Projects (PKX-xx)
 
 ## Conventions
@@ -18,15 +18,14 @@ Pokédex : appli web qui affiche les 1 025 Pokémon (illustrations officielles),
 - Commits en français, préfixés par l'ID du ticket (PKX-02: …)
 - UI : shadcn/ui (Base UI) dans components/ui, icônes lucide-react, animations motion ("use client"), transitions de page avec le skill vercel-react-view-transitions, couleurs de type depuis le thème ; pas d'autre librairie d'UI ; effets lourds réservés à la fiche détaillée. Direction visuelle : Holo Arcade.
 
-## Équipe (qui fait quoi)
-Antigravity dirige, Claude Code code, Codex teste. Le chef envoie ses consignes par Herdr : elles commencent par « Tâche du chef ».
-- Antigravity (agy), le chef : découpe, donne les tâches, vérifie, rend compte à l'humain. Il ne modifie aucun fichier.
-- Claude Code, le codeur (nom Herdr : codeur) : écrit le code (app/, components/, lib/, store/, config). Il ne modifie pas tests/.
-- Codex, le testeur (nom Herdr : testeur) : écrit et lance les tests, dans tests/ uniquement. Il ne corrige jamais le code : il signale le bug au chef.
-- Un seul agent modifie les fichiers à la fois.
-- Personne ne committe ni ne pousse sans l'accord de l'humain.
-- Quand vous répondez au chef, terminez par un bloc RÉSUMÉ : fichiers touchés, résultat, questions.
-- Commande de test : npm test
+## Équipe
+Antigravity (chef) délègue via T3 Code, Claude Code code, Codex teste.
+Mémoire : basic-memory, dossier `pokedex/`. Seul le chef la lit et l'écrit (règles dans le skill chef-t3).
+- Codeur : app/, components/, lib/, store/, config ; jamais `tests/`.
+- Testeur : `tests/` uniquement ; il signale les bugs, il ne les corrige pas.
+- Un seul agent modifie les fichiers à la fois. Personne ne committe sans l'accord de l'humain.
+- Réponse au chef : finir par RÉSUMÉ (10 lignes max).
+- Travail sans chef : lis la dernière passation de `pokedex/passations/` si la tâche la prolonge, et écris-en une de 6 lignes à la fin.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
@@ -37,60 +36,3 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
-
-## Mémoire partagée entre agents (obligatoire)
-
-Plusieurs agents travaillent sur ce projet (Claude Code, Codex, Antigravity), souvent en parallèle,
-chacun dans son propre worktree Git. Vous ne vous souvenez de rien d'une session à l'autre :
-la mémoire commune est dans l'outil MCP **basic-memory**.
-
-Toutes les notes de ce projet vont dans le dossier **`pokedex/`** de basic-memory, et nulle part ailleurs.
-
-### Au démarrage de chaque tâche
-
-1. Cherchez dans basic-memory les notes du dossier `pokedex/passations/` et lisez les 3 plus récentes.
-2. Lisez la note `pokedex/decisions` si elle existe.
-3. Si une passation concerne votre tâche, reprenez exactement là où elle s'arrête.
-   Dites à l'humain, en une ligne, ce que vous avez repris et de quelle passation.
-
-### Pendant la tâche
-
-- Une décision qui engage la suite (choix d'une bibliothèque, format de données, contrainte découverte) :
-  ajoutez-la à la note `pokedex/decisions` avec la date, la décision et la raison.
-- Ne recopiez pas de code dans la mémoire : citez les chemins de fichiers.
-
-### À la fin de chaque tâche, ou avant de vous arrêter
-
-Écrivez une note de passation dans `pokedex/passations/`,
-avec pour titre `AAAA-MM-JJ-HHMM-<agent>-<tâche-en-3-mots>`, et ces rubriques :
-
-- **Besoin** : ce que l'humain a demandé, avec ses mots.
-- **Fait** : ce qui marche maintenant, et comment vous l'avez vérifié.
-- **Reste à faire** : les prochaines étapes, dans l'ordre.
-- **Pour qui** : l'agent conseillé pour la suite (Claude, Codex, Antigravity) ou « n'importe lequel ».
-- **Fichiers touchés** : les chemins.
-- **Pièges** : ce qui a coincé, ce qu'il ne faut pas refaire.
-- **Branche / worktree** : le nom de la branche.
-
-### Règles
-
-- Jamais de secret (mot de passe, clé, token) dans la mémoire.
-- Si une note contredit le code, le code a raison : corrigez la note.
-- Une information stable, valable pour tout le projet : proposez à l'humain de l'ajouter
-  à ce fichier AGENTS.md plutôt que de la laisser en mémoire.
-
-## Équipe (qui fait quoi)
-
-Antigravity dirige, Claude Code code, Codex teste. Le chef envoie ses consignes par Herdr :
-elles commencent par « Tâche du chef ».
-
-- **Antigravity (`agy`), le chef** : découpe le travail, donne les tâches, vérifie, rend compte
-  à l'humain. Il ne modifie aucun fichier.
-- **Claude Code, le codeur** (nom Herdr : `codeur`) : écrit le code de l'application.
-  Il ne modifie pas le dossier de tests.
-- **Codex, le testeur** (nom Herdr : `testeur`) : écrit et lance les tests, dans le dossier de tests
-  uniquement. Il ne corrige jamais le code de l'application : il signale le bug au chef.
-- Un seul agent modifie les fichiers à la fois.
-- Personne ne committe ni ne pousse sans l'accord de l'humain.
-- Quand vous répondez au chef, terminez par un bloc **RÉSUMÉ** : fichiers touchés, résultat, questions.
-- Commande de test : celle de la ligne « Tester » de la section « Le projet ».

@@ -1,0 +1,41 @@
+# CI universelle (kit ~/outils-agents) : à chaque push sur main et à chaque pull request,
+# GitHub installe le projet puis lance la commande de la ligne « - Tester : `…` » d'AGENTS.md.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Projet JavaScript / TypeScript
+      - if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - if: hashFiles('package-lock.json') != ''
+        run: npm ci
+      - if: hashFiles('package.json') != '' && hashFiles('package-lock.json') == ''
+        run: npm install
+
+      # Projet Python
+      - if: hashFiles('requirements.txt', 'pyproject.toml') != ''
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - if: hashFiles('requirements.txt') != ''
+        run: pip install -r requirements.txt
+
+      - name: Commande « Tester » d'AGENTS.md
+        run: |
+          cmd=$(sed -n 's/^- Tester : `\([^`]*\)`.*/\1/p' AGENTS.md | head -1)
+          case "$cmd" in
+            ""|"<"*) echo "::warning::Ligne Tester absente ou non remplie dans AGENTS.md"; exit 0 ;;
+          esac
+          echo "▶ $cmd"
+          sh -c "$cmd"
