@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { TYPE_STYLES } from "@/lib/typeStyles";
 import FavoriteButton from "@/components/FavoriteButton";
+import TeamButton from "@/components/TeamButton";
 
 // Une carte pour un seul Pokémon : image, numéro (#001), nom et types.
 // Cliquer sur la carte ouvre sa fiche détaillée (/pokemon/{id}).
@@ -16,7 +17,7 @@ export default function PokemonCard({ pokemon }) {
     <div className="relative">
       <Link
         href={`/pokemon/${id}`}
-        className="flex flex-col items-center gap-2 rounded-lg border border-zinc-200 bg-white p-3 text-center shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+        className="flex flex-col items-center gap-2 rounded-lg border border-zinc-200 bg-white p-3 pb-10 text-center shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
       >
         <Image
           src={image}
@@ -42,6 +43,9 @@ export default function PokemonCard({ pokemon }) {
       </Link>
       <div className="absolute top-2 right-2">
         <FavoriteButton id={id} />
+      </div>
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
+        <TeamButton id={id} />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { parsePokemonId, getPokemonDetail } from "@/lib/pokeapi";
 import { TYPE_STYLES } from "@/lib/typeStyles";
 import FavoriteButton from "@/components/FavoriteButton";
+import TeamButton from "@/components/TeamButton";
 
 // Labels français des statistiques de base, dans l'ordre affiché par l'API.
 const STAT_LABELS = {
@@ -68,6 +69,10 @@ async function PokemonDetail({ paramsPromise }) {
           <h1 className="text-2xl font-bold capitalize text-zinc-900 dark:text-zinc-50">
             {pokemon.name}
           </h1>
+
+          <div className="mt-2">
+            <TeamButton id={pokemon.id} />
+          </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
             {pokemon.types.map((type) => (
