@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { searchPokemon } from '../lib/filters.js';
+import { filterByType, searchPokemon } from '../lib/filters.js';
 
 const pokemonList = [
   { id: 1, name: 'bulbasaur' },
@@ -31,5 +31,39 @@ describe('searchPokemon', () => {
 
   it('renvoie un tableau vide sans correspondance', () => {
     expect(searchPokemon(pokemonList, 'dracaufeu')).toEqual([]);
+  });
+});
+
+describe('filterByType', () => {
+  const pokemonWithTypes = [
+    { id: 4, name: 'charmander' },
+    { id: 5, name: 'charmeleon' },
+    { id: 6, name: 'charizard' },
+    { id: 7, name: 'squirtle' },
+  ];
+  const typeMap = {
+    fire: [4, 5, 6],
+    water: [7],
+  };
+
+  it('renvoie toute la liste quand le type est null ou vide', () => {
+    expect(filterByType(pokemonWithTypes, typeMap, null)).toBe(pokemonWithTypes);
+    expect(filterByType(pokemonWithTypes, typeMap, '')).toBe(pokemonWithTypes);
+  });
+
+  it('filtre la liste par type précis', () => {
+    expect(filterByType(pokemonWithTypes, typeMap, 'fire')).toEqual(
+      pokemonWithTypes.slice(0, 3),
+    );
+  });
+
+  it('renvoie un tableau vide pour un type inconnu', () => {
+    expect(filterByType(pokemonWithTypes, typeMap, 'cosmic')).toEqual([]);
+  });
+
+  it('combine le filtre par type avec la recherche par nom', () => {
+    const firePokemon = filterByType(pokemonWithTypes, typeMap, 'fire');
+
+    expect(searchPokemon(firePokemon, 'char')).toEqual(pokemonWithTypes.slice(0, 3));
   });
 });
