@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { parsePokemonId, getPokemonDetail } from "@/lib/pokeapi";
 import { TYPE_STYLES } from "@/lib/typeStyles";
+import { formatMeasure, getPokemonNeighbors } from "@/lib/format";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -60,10 +61,12 @@ async function PokemonDetail({ paramsPromise }) {
 
   const pokemon = await getPokemonDetail(id);
   const number = String(pokemon.id).padStart(3, "0");
+  const premierType = pokemon.types[0];
+  const { prev, next } = getPokemonNeighbors(pokemon.id);
 
   return (
     <div className="min-h-screen bg-background px-4 py-8">
-      <main id="main-content" className="mx-auto max-w-2xl">
+      <main id="main-content" className="mx-auto max-w-4xl">
         <Button
           variant="ghost"
           render={<Link href="/" transitionTypes={["nav-back"]} />}
@@ -75,76 +78,83 @@ async function PokemonDetail({ paramsPromise }) {
         </Button>
 
         <HoloReveal>
-          <Card className="relative items-center p-6 text-center">
-            <div className="absolute top-4 right-4">
-              <FavoriteButton id={pokemon.id} />
+          <Card className="p-6">
+            {/* 1 colonne sur mobile, 2 colonnes à partir de lg : l'illustration
+                à gauche (sur son halo), les informations à droite. */}
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+              <div className="flex items-center justify-center">
+                <HoloReveal glowType={premierType}>
+                  {/* Élément partagé : la même image que sur la carte de la
+                      grille (même "name"), pour qu'elle glisse jusqu'ici. */}
+                  <ViewTransition name={`pokemon-image-${pokemon.id}`} share="pokemon-image-morph">
+                    <Image
+                      src={pokemon.image}
+                      alt={pokemon.name}
+                      width={280}
+                      height={280}
+                      className="h-56 w-56 object-contain lg:h-64 lg:w-64"
+                      priority
+                    />
+                  </ViewTransition>
+                </HoloReveal>
+              </div>
+
+              <div className="text-center lg:text-left">
+                <p className="text-sm text-muted-foreground">#{number}</p>
+                <h1 className="font-heading text-3xl font-bold capitalize text-foreground">
+                  {pokemon.name}
+                </h1>
+
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-1 lg:justify-start">
+                  {pokemon.types.map((type) => (
+                    <Badge
+                      key={type}
+                      className={TYPE_STYLES[type]?.classes ?? "bg-type-normal text-type-normal-foreground"}
+                    >
+                      {TYPE_STYLES[type]?.label ?? type}
+                    </Badge>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex justify-center gap-2 lg:justify-start">
+                  <FavoriteButton id={pokemon.id} showLabel />
+                  <TeamButton id={pokemon.id} showLabel />
+                </div>
+
+                {pokemon.description && (
+                  <p className="mt-4 text-sm text-muted-foreground">
+                    {pokemon.description}
+                  </p>
+                )}
+
+                <div className="mt-4 flex justify-center gap-8 text-sm text-foreground lg:justify-start">
+                  <p>Taille : {formatMeasure(pokemon.height, "m")}</p>
+                  <p>Poids : {formatMeasure(pokemon.weight, "kg")}</p>
+                </div>
+
+                <StatBars stats={pokemon.stats} color={premierType} />
+              </div>
             </div>
-
-            {/* Élément partagé : la même image que sur la carte de la
-                grille (même "name"), pour qu'elle glisse jusqu'ici. */}
-            <ViewTransition name={`pokemon-image-${pokemon.id}`} share="pokemon-image-morph">
-              <Image
-                src={pokemon.image}
-                alt={pokemon.name}
-                width={200}
-                height={200}
-                className="h-40 w-40 object-contain"
-              />
-            </ViewTransition>
-
-            <p className="text-sm text-muted-foreground">#{number}</p>
-            <h1 className="font-heading text-3xl font-bold capitalize text-foreground">
-              {pokemon.name}
-            </h1>
-
-            <div className="mt-2">
-              <TeamButton id={pokemon.id} />
-            </div>
-
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
-              {pokemon.types.map((type) => (
-                <Badge
-                  key={type}
-                  className={TYPE_STYLES[type]?.classes ?? "bg-type-normal text-type-normal-foreground"}
-                >
-                  {TYPE_STYLES[type]?.label ?? type}
-                </Badge>
-              ))}
-            </div>
-
-            {pokemon.description && (
-              <p className="mt-4 text-sm text-muted-foreground">
-                {pokemon.description}
-              </p>
-            )}
-
-            <div className="mt-4 flex justify-center gap-8 text-sm text-foreground">
-              <p>Taille : {pokemon.height} m</p>
-              <p>Poids : {pokemon.weight} kg</p>
-            </div>
-
-            <StatBars stats={pokemon.stats} />
 
             <div className="mt-6 flex w-full justify-between">
-              {pokemon.id > 1 ? (
+              {prev ? (
                 <Button
                   variant="secondary"
-                  render={<Link href={`/pokemon/${pokemon.id - 1}`} transitionTypes={["nav-back"]} />}
+                  render={<Link href={`/pokemon/${prev.id}`} transitionTypes={["nav-back"]} />}
                   nativeButton={false}
                 >
-                  <ChevronLeft data-icon="inline-start" />
-                  Précédent
+                  <ChevronLeft data-icon="inline-start" />#{prev.number} {prev.name}
                 </Button>
               ) : (
                 <span />
               )}
-              {pokemon.id < 1025 ? (
+              {next ? (
                 <Button
                   variant="secondary"
-                  render={<Link href={`/pokemon/${pokemon.id + 1}`} transitionTypes={["nav-forward"]} />}
+                  render={<Link href={`/pokemon/${next.id}`} transitionTypes={["nav-forward"]} />}
                   nativeButton={false}
                 >
-                  Suivant
+                  #{next.number} {next.name}
                   <ChevronRight data-icon="inline-end" />
                 </Button>
               ) : (
