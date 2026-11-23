@@ -45,20 +45,21 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
         />
       </div>
 
-      {/* Une seule ligne qui défile horizontalement sur mobile/tablette ;
-          grille 9x2 à partir de lg. */}
+      {/* Pastilles serrées et centrées, toujours à pleine opacité (seul
+          l'anneau rouge distingue le filtre actif) pour garder le contraste
+          des pastilles inactives, y compris en mode sombre. */}
       <ToggleGroup
         aria-label="Filtrer les Pokémon par type"
         value={selectedType ? [selectedType] : []}
         onValueChange={(values) => setSelectedType(values[0] ?? null)}
         spacing={2}
-        className="mb-2 flex w-full flex-nowrap gap-1.5 overflow-x-auto pb-2 lg:grid lg:grid-cols-9 lg:flex-wrap lg:justify-items-center lg:overflow-visible lg:pb-0"
+        className="mb-2 flex w-full flex-wrap justify-center gap-1.5"
       >
         {types.map((type) => (
           <ToggleGroupItem
             key={type}
             value={type}
-            className="h-auto min-w-0 shrink-0 rounded-full bg-transparent p-0 opacity-60 hover:bg-transparent hover:opacity-100 aria-pressed:bg-transparent aria-pressed:opacity-100 aria-pressed:ring-[3px] aria-pressed:ring-primary aria-pressed:ring-offset-2 aria-pressed:ring-offset-background"
+            className="h-auto min-w-0 shrink-0 rounded-full bg-transparent p-0 hover:bg-transparent aria-pressed:bg-transparent aria-pressed:ring-[3px] aria-pressed:ring-primary aria-pressed:ring-offset-2 aria-pressed:ring-offset-background"
           >
             <span
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium whitespace-nowrap ${TYPE_STYLES[type]?.classes ?? "bg-type-normal text-type-normal-foreground"}`}

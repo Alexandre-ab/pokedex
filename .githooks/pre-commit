@@ -1,0 +1,22 @@
+#!/bin/sh
+# Hook pre-commit universel (kit ~/outils-agents).
+# Avant chaque commit : lance la commande de la ligne « - Tester : `…` » d'AGENTS.md.
+# Si elle échoue, le commit est refusé. Si la ligne n'est pas encore remplie, il prévient et laisse passer.
+# Activé par : git config core.hooksPath .githooks
+# Contourner une seule fois (à éviter) : git commit --no-verify
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+cmd=$(sed -n 's/^- Tester : `\([^`]*\)`.*/\1/p' AGENTS.md 2>/dev/null | head -1)
+case "$cmd" in
+  ""|"<"*)
+    echo "⚠️  pre-commit : ligne « - Tester : \`…\` » absente ou non remplie dans AGENTS.md, aucun test lancé."
+    exit 0 ;;
+esac
+
+echo "🧪 pre-commit : $cmd"
+if ! sh -c "$cmd"; then
+  echo "❌ La commande Tester échoue : commit refusé. Corrige, puis recommence le commit."
+  exit 1
+fi
+echo "✅ Tests verts, le commit continue."

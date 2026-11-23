@@ -12,20 +12,20 @@ import TeamButton from "@/components/TeamButton";
 
 // Une carte pour un seul Pokémon : image, numéro + nom sur une ligne, et
 // types. Cliquer sur la carte ouvre sa fiche détaillée (/pokemon/{id}).
-// Les boutons favori et sacoche sont des frères du lien (pas des enfants) :
-// un <button> à l'intérieur d'un <a> serait du HTML invalide et causerait
-// une erreur d'hydratation.
+// Les boutons favori et sacoche sont sur leur propre ligne, sous les
+// types : des frères du lien (jamais des enfants) sur une rangée dédiée,
+// pour ne plus jamais recouvrir l'illustration.
 export default function PokemonCard({ pokemon }) {
   const { id, name, nameFr, image, types = [] } = pokemon;
   const nomAffiche = nameFr ?? name;
   const number = String(id).padStart(3, "0");
   const premierType = types[0];
 
-  // Léger dégradé teinté avec la couleur du premier type (via color-mix),
-  // lisible en clair comme en sombre puisqu'il se mélange à --background.
+  // Dégradé teinté avec la couleur du premier type (via color-mix), bien
+  // visible en clair comme en sombre puisqu'il se mélange à --background.
   const styleCarte = premierType
     ? {
-        background: `linear-gradient(135deg, color-mix(in oklch, var(--type-${premierType}) 22%, var(--background)) 0%, var(--background) 100%)`,
+        background: `linear-gradient(135deg, color-mix(in oklch, var(--type-${premierType}) 32%, var(--background)) 0%, var(--background) 100%)`,
       }
     : undefined;
 
@@ -35,7 +35,7 @@ export default function PokemonCard({ pokemon }) {
     // "pokemon-card" (content-visibility, voir app/globals.css) permet au
     // navigateur de ne pas calculer le rendu des cartes hors écran.
     <motion.div
-      className="pokemon-card relative"
+      className="pokemon-card"
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -57,9 +57,9 @@ export default function PokemonCard({ pokemon }) {
               className="h-24 w-24 object-contain sm:h-28 sm:w-28"
             />
           </ViewTransition>
-          <p className="w-full truncate text-sm font-medium text-foreground">
-            <span className="text-muted-foreground">#{number}</span>{" "}
-            <span className="font-heading font-semibold capitalize">
+          <p className="w-full truncate text-sm">
+            <span className="text-xs text-muted-foreground">#{number}</span>{" "}
+            <span className="font-heading font-bold capitalize text-foreground">
               {nomAffiche}
             </span>
           </p>
@@ -74,12 +74,13 @@ export default function PokemonCard({ pokemon }) {
             ))}
           </div>
         </Link>
+        {/* Favori et sacoche : frères du lien, jamais dedans, sur leur
+            propre ligne sous les types. */}
+        <div className="flex items-center justify-center gap-1">
+          <FavoriteButton id={id} />
+          <TeamButton id={id} />
+        </div>
       </Card>
-      {/* Favori et sacoche regroupés au même endroit, frères du lien. */}
-      <div className="absolute top-2 right-2 flex gap-1">
-        <FavoriteButton id={id} />
-        <TeamButton id={id} />
-      </div>
     </motion.div>
   );
 }

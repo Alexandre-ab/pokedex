@@ -10,7 +10,10 @@ import { useTeamStore } from "@/store/team";
 // on laisse add(id) être appelé, le store refuse et renvoie une raison,
 // qu'on affiche ici avec un toast (sonner) — la limite de 6 reste décidée
 // par le store, pas par ce composant.
-export default function TeamButton({ id }) {
+// "showLabel" : sur la fiche détaillée, le bouton affiche aussi un texte
+// et un style nettement différent selon l'état actif. Sur les cartes de
+// la grille (par défaut), il reste une simple icône ronde.
+export default function TeamButton({ id, showLabel = false }) {
   const hasHydrated = useTeamStore((state) => state.hasHydrated);
   const isInTeam = useTeamStore((state) => state.teamIds.includes(id));
   const add = useTeamStore((state) => state.add);
@@ -21,24 +24,41 @@ export default function TeamButton({ id }) {
   const estDansLaSacoche = hasHydrated && isInTeam;
   const libelle = estDansLaSacoche ? "Retirer de la sacoche" : "Ajouter à la sacoche";
 
+  function handleClick(event) {
+    // On empêche le clic de déclencher le lien de la carte en dessous.
+    event.preventDefault();
+    event.stopPropagation();
+    if (estDansLaSacoche) {
+      remove(id);
+      return;
+    }
+    const result = add(id);
+    if (!result.ok) {
+      toast.error(result.reason);
+    }
+  }
+
+  if (showLabel) {
+    return (
+      <Button
+        type="button"
+        variant={estDansLaSacoche ? "default" : "outline"}
+        onClick={handleClick}
+        aria-label={libelle}
+        title={libelle}
+      >
+        <Backpack data-icon="inline-start" className={estDansLaSacoche ? "fill-current" : ""} />
+        {estDansLaSacoche ? "Dans la sacoche" : "Ajouter à la sacoche"}
+      </Button>
+    );
+  }
+
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon"
-      onClick={(event) => {
-        // On empêche le clic de déclencher le lien de la carte en dessous.
-        event.preventDefault();
-        event.stopPropagation();
-        if (estDansLaSacoche) {
-          remove(id);
-          return;
-        }
-        const result = add(id);
-        if (!result.ok) {
-          toast.error(result.reason);
-        }
-      }}
+      onClick={handleClick}
       aria-label={libelle}
       title={libelle}
       className="rounded-full bg-background/80 shadow"
