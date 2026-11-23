@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getPokemonList, getTypeMap, getTypes } from '../lib/pokeapi.js';
+import {
+  getPokemonDetail,
+  getPokemonList,
+  getTypeMap,
+  getTypes,
+  parsePokemonId,
+} from '../lib/pokeapi.js';
 
 const API_URL = 'https://pokeapi.co/api/v2/pokemon?limit=1025';
 const IMAGE_BASE_URL =
@@ -120,5 +126,97 @@ describe('getTypeMap', () => {
       expect(typeMap[type]).not.toContain(10001);
     }
     expect(Object.keys(typeMap)).toEqual(playableTypes);
+  });
+});
+
+describe('parsePokemonId', () => {
+  it.each([
+    ['1', 1],
+    ['25', 25],
+    ['1025', 1025],
+    [25, 25],
+  ])('convertit %s en id entier', (rawId, expected) => {
+    expect(parsePokemonId(rawId)).toBe(expected);
+    expect(Number.isInteger(parsePokemonId(rawId))).toBe(true);
+  });
+
+  it.each(['0', '1026', '2000', '-1', 'abc', '25a', ''])(
+    'rejette l’id invalide %s',
+    (rawId) => {
+      expect(parsePokemonId(rawId)).toBeNull();
+    },
+  );
+});
+
+describe('getPokemonDetail', () => {
+  const pokemonUrl = 'https://pokeapi.co/api/v2/pokemon/25';
+  const speciesUrl = 'https://pokeapi.co/api/v2/pokemon-species/25';
+  const pokemonResponse = {
+    name: 'pikachu',
+    types: [{ type: { name: 'electric' } }],
+    height: 4,
+    weight: 60,
+    stats: [
+      { stat: { name: 'hp' }, base_stat: 35 },
+      { stat: { name: 'speed' }, base_stat: 90 },
+    ],
+  };
+  const speciesResponse = {
+    names: [{ language: { name: 'fr' }, name: 'Pikachu' }],
+    flavor_text_entries: [
+      { language: { name: 'en' }, flavor_text: 'English description' },
+      { language: { name: 'fr' }, flavor_text: 'Une souris\nélectrique.\f' },
+    ],
+  };
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  function stubDetailFetch(species = speciesResponse) {
+    const fetchMock = vi.fn((url) => {
+      const body = url === pokemonUrl ? pokemonResponse : species;
+      return Promise.resolve({ json: () => Promise.resolve(body) });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    return fetchMock;
+  }
+
+  it('charge Pokémon et espèce en parallèle puis renvoie la fiche formatée en français', async () => {
+    const fetchMock = stubDetailFetch();
+
+    const detail = await getPokemonDetail(25);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual(
+      expect.arrayContaining([pokemonUrl, speciesUrl]),
+    );
+    expect(detail).toEqual({
+      id: 25,
+      name: 'Pikachu',
+      image: `${IMAGE_BASE_URL}/25.png`,
+      types: ['electric'],
+      height: 0.4,
+      weight: 6,
+      stats: [
+        { name: 'hp', value: 35 },
+        { name: 'speed', value: 90 },
+      ],
+      description: 'Une souris électrique. ',
+    });
+  });
+
+  it('utilise le nom API si aucun nom français n’est disponible', async () => {
+    stubDetailFetch({
+      names: [{ language: { name: 'en' }, name: 'Pikachu' }],
+      flavor_text_entries: [
+        { language: { name: 'en' }, flavor_text: 'English description' },
+      ],
+    });
+
+    await expect(getPokemonDetail(25)).resolves.toMatchObject({
+      name: 'pikachu',
+      description: '',
+    });
   });
 });

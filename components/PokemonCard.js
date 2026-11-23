@@ -1,13 +1,18 @@
 import Image from "next/image";
+import Link from "next/link";
 import { TYPE_STYLES } from "@/lib/typeStyles";
 
 // Une carte pour un seul Pokémon : image, numéro (#001), nom et types.
+// Cliquer sur la carte ouvre sa fiche détaillée (/pokemon/{id}).
 export default function PokemonCard({ pokemon }) {
   const { id, name, image, types = [] } = pokemon;
   const number = String(id).padStart(3, "0");
 
   return (
-    <div className="flex flex-col items-center gap-2 rounded-lg border border-zinc-200 bg-white p-3 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <Link
+      href={`/pokemon/${id}`}
+      className="flex flex-col items-center gap-2 rounded-lg border border-zinc-200 bg-white p-3 text-center shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+    >
       <Image
         src={image}
         alt={name}
@@ -29,6 +34,6 @@ export default function PokemonCard({ pokemon }) {
           </span>
         ))}
       </div>
-    </div>
+    </Link>
   );
 }
