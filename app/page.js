@@ -1,7 +1,7 @@
 import { getPokemonList } from "@/lib/pokeapi";
-import PokemonCard from "@/components/PokemonCard";
+import PokemonGrid from "@/components/PokemonGrid";
 
-// Page d'accueil : la grille des 1 025 Pokémon.
+// Page d'accueil : la grille des 1 025 Pokémon, avec recherche.
 export default async function Home() {
   const pokemonList = await getPokemonList();
 
@@ -11,11 +11,7 @@ export default async function Home() {
         <h1 className="mb-6 text-center text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Pokédex
         </h1>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          {pokemonList.map((pokemon) => (
-            <PokemonCard key={pokemon.id} pokemon={pokemon} />
-          ))}
-        </div>
+        <PokemonGrid pokemonList={pokemonList} />
       </main>
     </div>
   );
