@@ -1,26 +1,352 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-heading: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  /* Couleurs des 18 types de Pokémon : une seule source (ici), avec leurs
+     valeurs clair/sombre définies plus bas dans :root et .dark. */
+  --color-type-normal: var(--type-normal);
+  --color-type-normal-foreground: var(--type-normal-foreground);
+  --color-type-fire: var(--type-fire);
+  --color-type-fire-foreground: var(--type-fire-foreground);
+  --color-type-water: var(--type-water);
+  --color-type-water-foreground: var(--type-water-foreground);
+  --color-type-electric: var(--type-electric);
+  --color-type-electric-foreground: var(--type-electric-foreground);
+  --color-type-grass: var(--type-grass);
+  --color-type-grass-foreground: var(--type-grass-foreground);
+  --color-type-ice: var(--type-ice);
+  --color-type-ice-foreground: var(--type-ice-foreground);
+  --color-type-fighting: var(--type-fighting);
+  --color-type-fighting-foreground: var(--type-fighting-foreground);
+  --color-type-poison: var(--type-poison);
+  --color-type-poison-foreground: var(--type-poison-foreground);
+  --color-type-ground: var(--type-ground);
+  --color-type-ground-foreground: var(--type-ground-foreground);
+  --color-type-flying: var(--type-flying);
+  --color-type-flying-foreground: var(--type-flying-foreground);
+  --color-type-psychic: var(--type-psychic);
+  --color-type-psychic-foreground: var(--type-psychic-foreground);
+  --color-type-bug: var(--type-bug);
+  --color-type-bug-foreground: var(--type-bug-foreground);
+  --color-type-rock: var(--type-rock);
+  --color-type-rock-foreground: var(--type-rock-foreground);
+  --color-type-ghost: var(--type-ghost);
+  --color-type-ghost-foreground: var(--type-ghost-foreground);
+  --color-type-dragon: var(--type-dragon);
+  --color-type-dragon-foreground: var(--type-dragon-foreground);
+  --color-type-dark: var(--type-dark);
+  --color-type-dark-foreground: var(--type-dark-foreground);
+  --color-type-steel: var(--type-steel);
+  --color-type-steel-foreground: var(--type-steel-foreground);
+  --color-type-fairy: var(--type-fairy);
+  --color-type-fairy-foreground: var(--type-fairy-foreground);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Direction visuelle "Holo Arcade" — mode clair. */
+  --background: #edeff2;
+  --foreground: #14161a;
+  --card: #f5f6f8;
+  --card-foreground: #14161a;
+  --popover: #f5f6f8;
+  --popover-foreground: #14161a;
+  --primary: #6c4bd6;
+  --primary-foreground: #f5f3ff;
+  --secondary: #2fd4c4;
+  --secondary-foreground: #0b2a27;
+  --muted: #e2e4e9;
+  --muted-foreground: #5b5f6b;
+  --accent: #2fd4c4;
+  --accent-foreground: #0b2a27;
+  --destructive: #e8384f;
+  --destructive-foreground: #fff5f6;
+  --border: #d7dae0;
+  --input: #d7dae0;
+  --ring: #6c4bd6;
+  --chart-1: #6c4bd6;
+  --chart-2: #2fd4c4;
+  --chart-3: #e8384f;
+  --chart-4: #a5b4fc;
+  --chart-5: #5b5f6b;
+  --radius: 0.625rem;
+  --sidebar: #f5f6f8;
+  --sidebar-foreground: #14161a;
+  --sidebar-primary: #6c4bd6;
+  --sidebar-primary-foreground: #f5f3ff;
+  --sidebar-accent: #2fd4c4;
+  --sidebar-accent-foreground: #0b2a27;
+  --sidebar-border: #d7dae0;
+  --sidebar-ring: #6c4bd6;
+
+  /* Couleurs des 18 types de Pokémon — mode clair. */
+  --type-normal: #9ca3af;
+  --type-normal-foreground: #15161a;
+  --type-fire: #f97316;
+  --type-fire-foreground: #14161a;
+  --type-water: #3b82f6;
+  --type-water-foreground: #14161a;
+  --type-electric: #facc15;
+  --type-electric-foreground: #18181b;
+  --type-grass: #22c55e;
+  --type-grass-foreground: #14161a;
+  --type-ice: #67e8f9;
+  --type-ice-foreground: #0b2a2e;
+  --type-fighting: #b91c1c;
+  --type-fighting-foreground: #ffffff;
+  --type-poison: #a855f7;
+  --type-poison-foreground: #14161a;
+  --type-ground: #d97706;
+  --type-ground-foreground: #14161a;
+  --type-flying: #a5b4fc;
+  --type-flying-foreground: #1e2242;
+  --type-psychic: #ec4899;
+  --type-psychic-foreground: #14161a;
+  --type-bug: #84cc16;
+  --type-bug-foreground: #182905;
+  --type-rock: #a16207;
+  --type-rock-foreground: #ffffff;
+  --type-ghost: #6d28d9;
+  --type-ghost-foreground: #ffffff;
+  --type-dragon: #4f46e5;
+  --type-dragon-foreground: #ffffff;
+  --type-dark: #3f3f46;
+  --type-dark-foreground: #ffffff;
+  --type-steel: #94a3b8;
+  --type-steel-foreground: #101722;
+  --type-fairy: #fda4af;
+  --type-fairy-foreground: #2a0a12;
+}
+
+.dark {
+  /* Direction visuelle "Holo Arcade" — mode sombre. */
+  --background: #15111f;
+  --foreground: #eceaf5;
+  --card: #1c1730;
+  --card-foreground: #eceaf5;
+  --popover: #1c1730;
+  --popover-foreground: #eceaf5;
+  --primary: #9b7cff;
+  --primary-foreground: #15111f;
+  --secondary: #4fe9da;
+  --secondary-foreground: #06201d;
+  --muted: #241e38;
+  --muted-foreground: #b3adc9;
+  --accent: #4fe9da;
+  --accent-foreground: #06201d;
+  --destructive: #e8384f;
+  --destructive-foreground: #fff5f6;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.16);
+  --ring: #9b7cff;
+  --chart-1: #9b7cff;
+  --chart-2: #4fe9da;
+  --chart-3: #e8384f;
+  --chart-4: #818cf8;
+  --chart-5: #b3adc9;
+  --sidebar: #1c1730;
+  --sidebar-foreground: #eceaf5;
+  --sidebar-primary: #9b7cff;
+  --sidebar-primary-foreground: #15111f;
+  --sidebar-accent: #4fe9da;
+  --sidebar-accent-foreground: #06201d;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-ring: #9b7cff;
+
+  /* Couleurs des 18 types de Pokémon — mode sombre (même source, variantes
+     plus lumineuses pour rester lisibles sur le fond quasi-noir). */
+  --type-normal: #b6bcc9;
+  --type-normal-foreground: #15111f;
+  --type-fire: #fb8b4d;
+  --type-fire-foreground: #1a0d02;
+  --type-water: #5fa0ff;
+  --type-water-foreground: #071021;
+  --type-electric: #ffde59;
+  --type-electric-foreground: #1c1706;
+  --type-grass: #4ade80;
+  --type-grass-foreground: #06210f;
+  --type-ice: #8ef3ff;
+  --type-ice-foreground: #04222a;
+  --type-fighting: #e34848;
+  --type-fighting-foreground: #1f0505;
+  --type-poison: #c084fc;
+  --type-poison-foreground: #1c0a2e;
+  --type-ground: #f2a93b;
+  --type-ground-foreground: #1f1002;
+  --type-flying: #c7d2fe;
+  --type-flying-foreground: #11142b;
+  --type-psychic: #f472b6;
+  --type-psychic-foreground: #2a0a18;
+  --type-bug: #a3e635;
+  --type-bug-foreground: #101d04;
+  --type-rock: #ca8a20;
+  --type-rock-foreground: #1c1304;
+  --type-ghost: #8b5cf6;
+  --type-ghost-foreground: #140729;
+  --type-dragon: #818cf8;
+  --type-dragon-foreground: #0e0e2a;
+  --type-dark: #6b6b76;
+  --type-dark-foreground: #ffffff;
+  --type-steel: #b6c2d1;
+  --type-steel-foreground: #0e141c;
+  --type-fairy: #fecdd3;
+  --type-fairy-foreground: #2a0a12;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Transitions de vue (ViewTransition) — direction "Holo Arcade". */
+:root {
+  --duration-exit: 150ms;
+  --duration-enter: 220ms;
+  --duration-move: 420ms;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+@keyframes slide-y {
+  from {
+    transform: translateY(var(--slide-y-offset, 12px));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Carte -> fiche : glissement vertical léger ("révélation" de la fiche). */
+::view-transition-old(.slide-down) {
+  animation:
+    var(--duration-exit) ease-out both fade reverse,
+    var(--duration-exit) ease-out both slide-y reverse;
+}
+::view-transition-new(.slide-up) {
+  animation:
+    var(--duration-enter) ease-in var(--duration-exit) both fade,
+    var(--duration-move) ease-in both slide-y;
+}
+
+/* Précédent / Suivant : glissement horizontal directionnel. */
+::view-transition-old(.nav-forward) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-exit) ease-in both fade reverse,
+    var(--duration-move) ease-in-out both slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both fade,
+    var(--duration-move) ease-in-out both slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-exit) ease-in both fade reverse,
+    var(--duration-move) ease-in-out both slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both fade,
+    var(--duration-move) ease-in-out both slide;
+}
+
+/* Élément partagé : l'illustration qui glisse de la carte à la fiche, avec
+   un léger flou façon reflet holographique pendant le morph. */
+::view-transition-group(.pokemon-image-morph) {
+  animation-duration: var(--duration-move);
+}
+::view-transition-image-pair(.pokemon-image-morph) {
+  animation-name: holo-blur;
+}
+@keyframes holo-blur {
+  30% {
+    filter: blur(3px) saturate(1.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* Grille de 1 025 cartes : le navigateur ignore le rendu (style + layout +
+   paint) des cartes hors écran, et utilise cette taille approximative tant
+   qu'il ne les a pas encore mesurées. */
+.pokemon-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
 }

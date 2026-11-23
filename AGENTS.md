@@ -16,6 +16,7 @@ Pokédex : appli web qui affiche les 1 025 Pokémon (illustrations officielles),
 - Style en classes Tailwind uniquement
 - Code simple et commenté : c'est un projet d'apprentissage
 - Commits en français, préfixés par l'ID du ticket (PKX-02: …)
+- UI : shadcn/ui (Base UI) dans components/ui, icônes lucide-react, animations motion ("use client"), transitions de page avec le skill vercel-react-view-transitions, couleurs de type depuis le thème ; pas d'autre librairie d'UI ; effets lourds réservés à la fiche détaillée. Direction visuelle : Holo Arcade.
 
 ## Équipe (qui fait quoi)
 Antigravity dirige, Claude Code code, Codex teste. Le chef envoie ses consignes par Herdr : elles commencent par « Tâche du chef ».

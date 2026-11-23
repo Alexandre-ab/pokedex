@@ -1,5 +1,7 @@
 "use client";
 
+import { Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useFavoritesStore } from "@/store/favorites";
 
 // Bouton cœur pour ajouter/retirer un Pokémon des favoris.
@@ -16,8 +18,10 @@ export default function FavoriteButton({ id }) {
   const estFavori = hasHydrated && isFavorite;
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon"
       onClick={(event) => {
         // On empêche le clic de déclencher le lien de la carte en dessous.
         event.preventDefault();
@@ -25,13 +29,11 @@ export default function FavoriteButton({ id }) {
         toggle(id);
       }}
       aria-label={estFavori ? "Retirer des favoris" : "Ajouter aux favoris"}
-      className="flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg shadow dark:bg-zinc-900/80"
+      className="rounded-full bg-background/80 shadow"
     >
-      {estFavori ? (
-        <span className="text-red-500">♥</span>
-      ) : (
-        <span className="text-zinc-400">♡</span>
-      )}
-    </button>
+      <Heart
+        className={estFavori ? "fill-destructive text-destructive" : "text-muted-foreground"}
+      />
+    </Button>
   );
 }

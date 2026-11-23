@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { searchPokemon, filterByType } from "@/lib/filters";
 import { TYPE_STYLES } from "@/lib/typeStyles";
+import { Input } from "@/components/ui/input";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import PokemonCard from "@/components/PokemonCard";
 
 // Grille des Pokémon avec recherche (nom/numéro) et filtre par type.
@@ -14,39 +16,46 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
   const filteredByType = filterByType(pokemonList, typeMap, selectedType);
   const filteredList = searchPokemon(filteredByType, query);
 
-  function handleTypeClick(type) {
-    // Un clic sur le type déjà actif le retire (toggle).
-    setSelectedType((current) => (current === type ? null : type));
-  }
-
   return (
     <div>
-      <input
+      <label htmlFor="pokemon-search" className="sr-only">
+        Rechercher un Pokémon par nom ou par numéro
+      </label>
+      <Input
+        id="pokemon-search"
         type="text"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Rechercher un Pokémon (nom ou numéro)"
-        className="mb-4 w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+        className="mb-4 h-10"
       />
 
-      <div className="mb-6 flex flex-wrap justify-center gap-2">
-        {types.map((type) => {
-          const isSelected = selectedType === type;
-          return (
-            <button
+      <div className="mb-6 flex justify-center">
+        <ToggleGroup
+          aria-label="Filtrer les Pokémon par type"
+          value={selectedType ? [selectedType] : []}
+          onValueChange={(values) => setSelectedType(values[0] ?? null)}
+          spacing={2}
+          className="flex-wrap justify-center"
+        >
+          {types.map((type) => (
+            <ToggleGroupItem
               key={type}
-              type="button"
-              onClick={() => handleTypeClick(type)}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-opacity ${TYPE_STYLES[type]?.classes ?? "bg-zinc-400 text-white"} ${isSelected ? "ring-2 ring-offset-2 ring-zinc-900 dark:ring-zinc-50" : "opacity-70 hover:opacity-100"}`}
+              value={type}
+              className="h-auto min-w-0 rounded-full bg-transparent p-0 hover:bg-transparent data-[state=on]:bg-transparent data-[state=off]:opacity-60 data-[state=on]:opacity-100 data-[state=on]:ring-2 data-[state=on]:ring-foreground hover:opacity-100"
             >
-              {TYPE_STYLES[type]?.label ?? type}
-            </button>
-          );
-        })}
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-medium ${TYPE_STYLES[type]?.classes ?? "bg-type-normal text-type-normal-foreground"}`}
+              >
+                {TYPE_STYLES[type]?.label ?? type}
+              </span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
 
       {filteredList.length === 0 ? (
-        <p className="text-center text-zinc-500 dark:text-zinc-400">
+        <p className="text-center text-muted-foreground">
           Aucun Pokémon trouvé
         </p>
       ) : (

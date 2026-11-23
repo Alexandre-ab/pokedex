@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { getPokemonList, getTypes, getTypeMap } from "@/lib/pokeapi";
 import PokemonGrid from "@/components/PokemonGrid";
 
@@ -18,17 +19,19 @@ export default async function Home() {
   }));
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-8 dark:bg-black">
-      <main className="mx-auto max-w-6xl">
-        <h1 className="mb-6 text-center text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          Pokédex
-        </h1>
-        <PokemonGrid
-          pokemonList={pokemonWithTypes}
-          types={types}
-          typeMap={typeMap}
-        />
-      </main>
-    </div>
+    <ViewTransition enter="slide-up" default="none">
+      <div className="min-h-screen bg-background px-4 py-8">
+        <main id="main-content" className="mx-auto max-w-6xl">
+          <h1 className="font-heading mb-6 text-center text-3xl font-bold text-foreground">
+            Pokédex
+          </h1>
+          <PokemonGrid
+            pokemonList={pokemonWithTypes}
+            types={types}
+            typeMap={typeMap}
+          />
+        </main>
+      </div>
+    </ViewTransition>
   );
 }

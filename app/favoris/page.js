@@ -17,9 +17,9 @@ export default async function FavorisPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-8 dark:bg-black">
-      <main className="mx-auto max-w-6xl">
-        <h1 className="mb-6 text-center text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+    <div className="min-h-screen bg-background px-4 py-8">
+      <main id="main-content" className="mx-auto max-w-6xl">
+        <h1 className="font-heading mb-6 text-center text-3xl font-bold text-foreground">
           Mes favoris
         </h1>
         <FavoritesList pokemonList={pokemonWithTypes} />

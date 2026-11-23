@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useFavoritesStore } from "@/store/favorites";
+import { Button } from "@/components/ui/button";
 import PokemonCard from "@/components/PokemonCard";
 
 // Affiche les cartes des Pokémon mis en favori.
@@ -17,13 +19,12 @@ export default function FavoritesList({ pokemonList }) {
 
   if (favoris.length === 0) {
     return (
-      <div className="text-center">
-        <p className="mb-4 text-zinc-500 dark:text-zinc-400">
-          Aucun Pokémon en favori
-        </p>
-        <Link href="/" className="text-sm text-zinc-700 hover:underline dark:text-zinc-300">
-          ← Retour au Pokédex
-        </Link>
+      <div className="flex flex-col items-center gap-4 text-center">
+        <p className="text-muted-foreground">Aucun Pokémon en favori</p>
+        <Button variant="outline" render={<Link href="/" />} nativeButton={false}>
+          <ArrowLeft data-icon="inline-start" />
+          Retour au Pokédex
+        </Button>
       </div>
     );
   }

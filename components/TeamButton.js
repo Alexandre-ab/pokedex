@@ -1,11 +1,15 @@
 "use client";
 
+import { toast } from "sonner";
+import { Backpack } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useTeamStore } from "@/store/team";
 
 // Bouton pour ajouter/retirer un Pokémon de la sacoche.
 // On ne désactive jamais le bouton "Ajouter" quand la sacoche est pleine :
-// on laisse add(id) être appelé, le store refuse et pose lastMessage, que
-// components/Header.js affiche dans sa bannière.
+// on laisse add(id) être appelé, le store refuse et renvoie une raison,
+// qu'on affiche ici avec un toast (sonner) — la limite de 6 reste décidée
+// par le store, pas par ce composant.
 export default function TeamButton({ id }) {
   const hasHydrated = useTeamStore((state) => state.hasHydrated);
   const isInTeam = useTeamStore((state) => state.teamIds.includes(id));
@@ -17,21 +21,29 @@ export default function TeamButton({ id }) {
   const estDansLaSacoche = hasHydrated && isInTeam;
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon"
       onClick={(event) => {
         // On empêche le clic de déclencher le lien de la carte en dessous.
         event.preventDefault();
         event.stopPropagation();
         if (estDansLaSacoche) {
           remove(id);
-        } else {
-          add(id);
+          return;
+        }
+        const result = add(id);
+        if (!result.ok) {
+          toast.error(result.reason);
         }
       }}
-      className="rounded-full bg-white/80 px-2 py-1 text-xs font-medium text-zinc-700 shadow dark:bg-zinc-900/80 dark:text-zinc-200"
+      aria-label={estDansLaSacoche ? "Retirer de la sacoche" : "Ajouter à la sacoche"}
+      className="rounded-full bg-background/80 shadow"
     >
-      {estDansLaSacoche ? "Retirer de la sacoche" : "Ajouter à la sacoche"}
-    </button>
+      <Backpack
+        className={estDansLaSacoche ? "fill-secondary text-secondary-foreground" : "text-muted-foreground"}
+      />
+    </Button>
   );
 }
