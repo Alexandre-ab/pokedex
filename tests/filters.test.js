@@ -9,6 +9,12 @@ const pokemonList = [
 ];
 
 describe('searchPokemon', () => {
+  const pokemonWithFrenchNames = [
+    { id: 1, name: 'bulbasaur', nameFr: 'Bulbizarre' },
+    { id: 6, name: 'charizard', nameFr: 'Dracaufeu' },
+    { id: 1025, name: 'pecharunt', nameFr: 'Pêchaminus' },
+  ];
+
   it('renvoie toute la liste pour un texte vide ou composé d’espaces', () => {
     expect(searchPokemon(pokemonList, '')).toBe(pokemonList);
     expect(searchPokemon(pokemonList, '   ')).toBe(pokemonList);
@@ -31,6 +37,32 @@ describe('searchPokemon', () => {
 
   it('renvoie un tableau vide sans correspondance', () => {
     expect(searchPokemon(pokemonList, 'dracaufeu')).toEqual([]);
+  });
+
+  it.each(['bulbizarre', 'dracaufeu', 'pechaminus', 'pêchaminus'])(
+    'recherche le nom français avec ou sans accent (%s)',
+    (query) => {
+      const expectedId = query === 'bulbizarre' ? 1 : query === 'dracaufeu' ? 6 : 1025;
+
+      expect(searchPokemon(pokemonWithFrenchNames, query)).toEqual([
+        pokemonWithFrenchNames.find((pokemon) => pokemon.id === expectedId),
+      ]);
+    },
+  );
+
+  it.each(['bulbasaur', 'charizard'])('recherche aussi le nom anglais (%s)', (query) => {
+    const pokemon = pokemonWithFrenchNames.find((entry) => entry.name === query);
+
+    expect(searchPokemon(pokemonWithFrenchNames, query)).toEqual([pokemon]);
+  });
+
+  it('reste compatible avec les objets qui ne possèdent pas nameFr', () => {
+    const pokemonWithoutFrenchName = [{ id: 4, name: 'charmander' }];
+
+    expect(searchPokemon(pokemonWithoutFrenchName, 'char')).toEqual(
+      pokemonWithoutFrenchName,
+    );
+    expect(searchPokemon(pokemonWithoutFrenchName, 'dracaufeu')).toEqual([]);
   });
 });
 

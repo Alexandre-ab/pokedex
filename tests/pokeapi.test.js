@@ -6,6 +6,7 @@ import {
   getTypes,
   parsePokemonId,
 } from '../lib/pokeapi.js';
+import nomsFr from '../lib/data/noms-fr.json';
 
 const API_URL = 'https://pokeapi.co/api/v2/pokemon?limit=1025';
 const IMAGE_BASE_URL =
@@ -66,6 +67,33 @@ describe('getPokemonList', () => {
     expect(ids).toEqual(Array.from({ length: 1025 }, (_, index) => index + 1));
     expect(ids).not.toContain(0);
     expect(ids).not.toContain(10001);
+  });
+
+  it.each([
+    [1, 'Bulbizarre'],
+    [25, 'Pikachu'],
+    [1025, 'Pêchaminus'],
+  ])('ajoute le nom français de l’id %i', async (id, nameFr) => {
+    const pokemon = await getPokemonList();
+
+    expect(pokemon.find((entry) => entry.id === id)?.nameFr).toBe(nameFr);
+  });
+});
+
+describe('noms français locaux', () => {
+  it('contient un nom non vide pour chacun des ids 1 à 1025', () => {
+    expect(Object.keys(nomsFr)).toHaveLength(1025);
+
+    for (let id = 1; id <= 1025; id += 1) {
+      expect(nomsFr[id], `nom français manquant pour l’id ${id}`).toEqual(
+        expect.any(String),
+      );
+      expect(nomsFr[id].trim(), `nom français vide pour l’id ${id}`).not.toBe('');
+    }
+
+    expect(Object.keys(nomsFr).map(Number)).toEqual(
+      Array.from({ length: 1025 }, (_, index) => index + 1),
+    );
   });
 });
 

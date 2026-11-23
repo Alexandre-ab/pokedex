@@ -10,14 +10,24 @@ import { TYPE_STYLES } from "@/lib/typeStyles";
 import FavoriteButton from "@/components/FavoriteButton";
 import TeamButton from "@/components/TeamButton";
 
-// Une carte pour un seul Pokémon : image, numéro (#001), nom et types.
-// Cliquer sur la carte ouvre sa fiche détaillée (/pokemon/{id}).
+// Une carte pour un seul Pokémon : image, numéro + nom sur une ligne, et
+// types. Cliquer sur la carte ouvre sa fiche détaillée (/pokemon/{id}).
 // Les boutons favori et sacoche sont des frères du lien (pas des enfants) :
 // un <button> à l'intérieur d'un <a> serait du HTML invalide et causerait
 // une erreur d'hydratation.
 export default function PokemonCard({ pokemon }) {
-  const { id, name, image, types = [] } = pokemon;
+  const { id, name, nameFr, image, types = [] } = pokemon;
+  const nomAffiche = nameFr ?? name;
   const number = String(id).padStart(3, "0");
+  const premierType = types[0];
+
+  // Léger dégradé teinté avec la couleur du premier type (via color-mix),
+  // lisible en clair comme en sombre puisqu'il se mélange à --background.
+  const styleCarte = premierType
+    ? {
+        background: `linear-gradient(135deg, color-mix(in oklch, var(--type-${premierType}) 22%, var(--background)) 0%, var(--background) 100%)`,
+      }
+    : undefined;
 
   return (
     // Survol léger : juste un petit zoom au survol/au clic (transform,
@@ -30,7 +40,7 @@ export default function PokemonCard({ pokemon }) {
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
-      <Card className="gap-2 p-3 pb-10">
+      <Card style={styleCarte} className="gap-2 p-3">
         <Link
           href={`/pokemon/${id}`}
           transitionTypes={["nav-forward"]}
@@ -41,15 +51,17 @@ export default function PokemonCard({ pokemon }) {
           <ViewTransition name={`pokemon-image-${id}`} share="pokemon-image-morph">
             <Image
               src={image}
-              alt={name}
+              alt={nomAffiche}
               width={120}
               height={120}
               className="h-24 w-24 object-contain sm:h-28 sm:w-28"
             />
           </ViewTransition>
-          <p className="text-sm text-muted-foreground">#{number}</p>
-          <p className="font-heading text-base font-semibold capitalize text-foreground">
-            {name}
+          <p className="w-full truncate text-sm font-medium text-foreground">
+            <span className="text-muted-foreground">#{number}</span>{" "}
+            <span className="font-heading font-semibold capitalize">
+              {nomAffiche}
+            </span>
           </p>
           <div className="flex flex-wrap items-center justify-center gap-1">
             {types.map((type) => (
@@ -63,10 +75,9 @@ export default function PokemonCard({ pokemon }) {
           </div>
         </Link>
       </Card>
-      <div className="absolute top-2 right-2">
+      {/* Favori et sacoche regroupés au même endroit, frères du lien. */}
+      <div className="absolute top-2 right-2 flex gap-1">
         <FavoriteButton id={id} />
-      </div>
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
         <TeamButton id={id} />
       </div>
     </motion.div>

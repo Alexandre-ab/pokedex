@@ -22,9 +22,10 @@ export default async function Home() {
     <ViewTransition enter="slide-up" default="none">
       <div className="min-h-screen bg-background px-4 py-8">
         <main id="main-content" className="mx-auto max-w-6xl">
-          <h1 className="font-heading mb-6 text-center text-3xl font-bold text-foreground">
-            Pokédex
-          </h1>
+          {/* Le nom "Pokédex" est déjà visible dans l'en-tête : on garde
+              un titre de page pour la sémantique/l'accessibilité, sans le
+              répéter visuellement. */}
+          <h1 className="sr-only">Pokédex</h1>
           <PokemonGrid
             pokemonList={pokemonWithTypes}
             types={types}

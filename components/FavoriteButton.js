@@ -16,6 +16,7 @@ export default function FavoriteButton({ id }) {
   const toggle = useFavoritesStore((state) => state.toggle);
 
   const estFavori = hasHydrated && isFavorite;
+  const libelle = estFavori ? "Retirer des favoris" : "Ajouter aux favoris";
 
   return (
     <Button
@@ -28,7 +29,8 @@ export default function FavoriteButton({ id }) {
         event.stopPropagation();
         toggle(id);
       }}
-      aria-label={estFavori ? "Retirer des favoris" : "Ajouter aux favoris"}
+      aria-label={libelle}
+      title={libelle}
       className="rounded-full bg-background/80 shadow"
     >
       <Heart

@@ -33,7 +33,7 @@ export default function TeamView({ pokemonList }) {
             >
               <Image
                 src={pokemon.image}
-                alt={pokemon.name}
+                alt={pokemon.nameFr ?? pokemon.name}
                 width={100}
                 height={100}
                 className="h-20 w-20 object-contain"
@@ -42,7 +42,7 @@ export default function TeamView({ pokemonList }) {
                 #{String(pokemon.id).padStart(3, "0")}
               </p>
               <p className="font-heading text-sm font-semibold capitalize text-foreground">
-                {pokemon.name}
+                {pokemon.nameFr ?? pokemon.name}
               </p>
             </Link>
             <Button

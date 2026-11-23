@@ -19,6 +19,7 @@ export default function TeamButton({ id }) {
   // Avant hydratation, on affiche toujours "pas dans la sacoche" pour que
   // le rendu serveur et le premier rendu client soient identiques.
   const estDansLaSacoche = hasHydrated && isInTeam;
+  const libelle = estDansLaSacoche ? "Retirer de la sacoche" : "Ajouter à la sacoche";
 
   return (
     <Button
@@ -38,7 +39,8 @@ export default function TeamButton({ id }) {
           toast.error(result.reason);
         }
       }}
-      aria-label={estDansLaSacoche ? "Retirer de la sacoche" : "Ajouter à la sacoche"}
+      aria-label={libelle}
+      title={libelle}
       className="rounded-full bg-background/80 shadow"
     >
       <Backpack

@@ -248,6 +248,32 @@
   }
 }
 
+/* En-tête "rouge Pokédex" : on redéfinit localement les variables de
+   thème (background/foreground/muted/border/ring) pour que tous les
+   textes, icônes et boutons de l'en-tête (qui utilisent les classes
+   sémantiques habituelles, bg-background/text-foreground/etc.) héritent
+   automatiquement de ces couleurs, sans classe par élément. Contraste
+   vérifié (formule WCAG) : blanc sur ce rouge ≥ 6,9:1 en clair et ≥ 9,6:1
+   en sombre. */
+.site-header {
+  --background: #b3112b;
+  --foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.16);
+  --muted-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.28);
+  --ring: #ffcb05;
+  color: var(--foreground);
+}
+
+.dark .site-header {
+  --background: #8a0e22;
+  --foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.14);
+  --muted-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.22);
+  --ring: #ffcb05;
+}
+
 /* Transitions de vue (ViewTransition) — direction "Holo Arcade". */
 :root {
   --duration-exit: 150ms;
