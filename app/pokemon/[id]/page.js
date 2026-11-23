@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { parsePokemonId, getPokemonDetail } from "@/lib/pokeapi";
 import { TYPE_STYLES } from "@/lib/typeStyles";
+import FavoriteButton from "@/components/FavoriteButton";
 
 // Labels français des statistiques de base, dans l'ordre affiché par l'API.
 const STAT_LABELS = {
@@ -50,7 +51,10 @@ async function PokemonDetail({ paramsPromise }) {
           ← Retour au Pokédex
         </Link>
 
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="relative rounded-lg border border-zinc-200 bg-white p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="absolute top-4 right-4">
+            <FavoriteButton id={pokemon.id} />
+          </div>
           <Image
             src={pokemon.image}
             alt={pokemon.name}
