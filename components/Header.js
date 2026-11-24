@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -55,13 +55,29 @@ function estActif(pathname, href) {
   return pathname === href;
 }
 
+// Petit composant qui lit l'URL. Avec `cacheComponents: true`, usePathname()
+// dépend de la requête : il doit être sous <Suspense> pour que le reste du
+// Header puisse être pré-rendu au build.
+function HeaderAvecChemin({ namesById }) {
+  const pathname = usePathname();
+  return <HeaderContenu namesById={namesById} pathname={pathname} />;
+}
+
+// Point d'entrée : le shell est pré-rendu avec pathname="" (aucun lien actif)
+// en attendant l'URL ; même mise en page, donc ni clignotement ni décalage.
 export default function Header({ namesById = {} }) {
+  return (
+    <Suspense fallback={<HeaderContenu namesById={namesById} pathname="" />}>
+      <HeaderAvecChemin namesById={namesById} />
+    </Suspense>
+  );
+}
+
+function HeaderContenu({ namesById, pathname }) {
   useEffect(() => {
     useFavoritesStore.persist.rehydrate();
     useTeamStore.persist.rehydrate();
   }, []);
-
-  const pathname = usePathname();
 
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
   const favoriteCount = useFavoritesStore((state) => state.favoriteIds.length);
