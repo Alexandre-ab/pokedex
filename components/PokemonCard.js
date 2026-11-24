@@ -1,7 +1,6 @@
 "use client";
 
 import { ViewTransition } from "react";
-import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -30,16 +29,12 @@ export default function PokemonCard({ pokemon }) {
     : undefined;
 
   return (
-    // Survol léger : juste un petit zoom au survol/au clic (transform,
-    // peu coûteux même répété sur les 1 025 cartes de la grille).
+    // Survol léger : transition CSS sur transform (accélérée par le GPU, et
+    // bien moins lourde que 1 025 composants motion). Désactivée si
+    // l'utilisateur préfère moins d'animations (variante "motion-safe").
     // "pokemon-card" (content-visibility, voir app/globals.css) permet au
     // navigateur de ne pas calculer le rendu des cartes hors écran.
-    <motion.div
-      className="pokemon-card"
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-    >
+    <div className="pokemon-card motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-[1.02] motion-safe:active:scale-[0.98]">
       <Card style={styleCarte} className="gap-2 p-3">
         <Link
           href={`/pokemon/${id}`}
@@ -81,6 +76,6 @@ export default function PokemonCard({ pokemon }) {
           <TeamButton id={id} />
         </div>
       </Card>
-    </motion.div>
+    </div>
   );
 }

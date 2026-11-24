@@ -20,8 +20,9 @@ import {
 import ThemeToggle from "@/components/ThemeToggle";
 import PokeBall from "@/components/PokeBall";
 
-// En-tête global, façon "carnet de dresseur" : fin, collant en haut de
-// l'écran, fond semi-transparent flouté, une fine bordure rouge en bas.
+// En-tête global, façon "carnet de dresseur" : fin et léger, NON fixe — il
+// défile naturellement avec la page (pas de sticky, pas de flou).
+// Fond uni, simple bordure basse discrète, transitions douces au survol.
 // Le rouge n'apparaît que sur le logo et les compteurs (favoris/sacoche) :
 // le reste reste sobre et lisible, en clair comme en sombre.
 // C'est ici qu'on déclenche la réhydratation des stores des favoris et de
@@ -57,21 +58,21 @@ export default function Header({ namesById = {} }) {
       >
         Passer au contenu principal
       </a>
-      <header className="sticky top-0 z-40 border-b-[3px] border-primary bg-background/85 backdrop-blur-md">
-        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+      <header className="border-b border-border/70 bg-background">
+        <nav className="mx-auto flex h-12 max-w-6xl items-center justify-between px-4">
           {/* La Poké Ball fait un tour complet au survol — désactivé si
               l'utilisateur préfère moins d'animations. */}
           <Link
             href="/"
-            className="group flex items-center gap-2 font-heading text-xl font-bold text-foreground"
+            className="group flex items-center gap-2 font-heading text-lg font-bold text-foreground motion-safe:transition-colors motion-safe:duration-200 hover:text-primary"
           >
             <PokeBall
-              size={28}
+              size={24}
               className="text-primary motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-out motion-safe:group-hover:rotate-[360deg]"
             />
             Pokédex
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 [&_button]:motion-safe:transition-colors [&_button]:motion-safe:duration-200">
             <Button variant="ghost" render={<Link href="/favoris" />} nativeButton={false}>
               <Heart data-icon="inline-start" />
               Favoris

@@ -14,17 +14,17 @@ import TeamButton from "@/components/TeamButton";
 import HoloReveal from "@/components/HoloReveal";
 import StatBars from "@/components/StatBars";
 import PokemonDetailSkeleton from "@/components/PokemonDetailSkeleton";
+import PokemonKeyboardNav from "@/components/PokemonKeyboardNav";
 
-// Transition directionnelle : vient-on de la grille / du bouton Suivant
-// (nav-forward), ou du bouton Précédent (nav-back) ? Sans type (navigation
+// Transition directionnelle de la carte : vient-on du bouton / de la flèche
+// Suivant (nav-forward) ou Précédent (nav-back) ? Sans type (navigation
 // directe ou retour navigateur), pas d'animation directionnelle.
-function DetailTransition({ children }) {
+// Le <ViewTransition> est placé sur la carte (key = id) : changer de Pokémon
+// la remplace, et c'est elle qui glisse (un seul mouvement, pas deux).
+function CardTransition({ id, children }) {
+  const directions = { "nav-forward": "nav-forward", "nav-back": "nav-back", default: "none" };
   return (
-    <ViewTransition
-      enter={{ "nav-forward": "nav-forward", "nav-back": "nav-back", default: "none" }}
-      exit={{ "nav-forward": "nav-forward", "nav-back": "nav-back", default: "none" }}
-      default="none"
-    >
+    <ViewTransition key={id} enter={directions} exit={directions} update={directions} default="none">
       {children}
     </ViewTransition>
   );
@@ -35,8 +35,7 @@ function DetailTransition({ children }) {
 // dans un <Suspense>, pour que le reste de la route reste prérendable.
 export default function PokemonPage({ params }) {
   return (
-    <DetailTransition>
-      <Suspense
+    <Suspense
         fallback={
           <ViewTransition exit="slide-down">
             <PokemonDetailSkeleton />
@@ -46,8 +45,7 @@ export default function PokemonPage({ params }) {
         <ViewTransition enter="slide-up" default="none">
           <PokemonDetail paramsPromise={params} />
         </ViewTransition>
-      </Suspense>
-    </DetailTransition>
+    </Suspense>
   );
 }
 
@@ -67,6 +65,8 @@ async function PokemonDetail({ paramsPromise }) {
   return (
     <div className="min-h-screen bg-background px-4 py-8">
       <main id="main-content" className="mx-auto max-w-4xl">
+        {/* Flèches ← / → du clavier pour changer de Pokémon. */}
+        <PokemonKeyboardNav prevId={prev?.id ?? null} nextId={next?.id ?? null} />
         <Button
           variant="ghost"
           render={<Link href="/" transitionTypes={["nav-back"]} />}
@@ -77,7 +77,9 @@ async function PokemonDetail({ paramsPromise }) {
           Retour au Pokédex
         </Button>
 
-        <HoloReveal>
+        {/* Pas de fondu/zoom ici : l'entrée de la fiche est gérée par
+            <ViewTransition> (une seule animation, pas deux superposées). */}
+        <CardTransition id={pokemon.id}>
           <Card className="p-6">
             {/* 1 colonne sur mobile, 2 colonnes à partir de lg : l'illustration
                 à gauche (sur son halo), les informations à droite. */}
@@ -144,6 +146,7 @@ async function PokemonDetail({ paramsPromise }) {
                   nativeButton={false}
                 >
                   <ChevronLeft data-icon="inline-start" />#{prev.number} {prev.name}
+                  <kbd aria-hidden="true" className="hidden rounded border border-border px-1 text-xs sm:inline-flex">←</kbd>
                 </Button>
               ) : (
                 <span />
@@ -155,6 +158,7 @@ async function PokemonDetail({ paramsPromise }) {
                   nativeButton={false}
                 >
                   #{next.number} {next.name}
+                  <kbd aria-hidden="true" className="hidden rounded border border-border px-1 text-xs sm:inline-flex">→</kbd>
                   <ChevronRight data-icon="inline-end" />
                 </Button>
               ) : (
@@ -162,7 +166,7 @@ async function PokemonDetail({ paramsPromise }) {
               )}
             </div>
           </Card>
-        </HoloReveal>
+        </CardTransition>
       </main>
     </div>
   );
