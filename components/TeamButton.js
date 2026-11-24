@@ -12,7 +12,7 @@ import { useTeamStore } from "@/store/team";
 // par le store, pas par ce composant.
 // "showLabel" : sur la fiche détaillée, le bouton affiche aussi un texte
 // et un style nettement différent selon l'état actif. Sur les cartes de
-// la grille (par défaut), il reste une simple icône ronde.
+// la grille (par défaut), il devient un bouton arrondi de la carte (icône seule).
 export default function TeamButton({ id, showLabel = false }) {
   const hasHydrated = useTeamStore((state) => state.hasHydrated);
   const isInTeam = useTeamStore((state) => state.teamIds.includes(id));
@@ -53,19 +53,21 @@ export default function TeamButton({ id, showLabel = false }) {
     );
   }
 
+  // Version compacte (cartes de la grille) : un bouton arrondi
+  // de la carte — pleine largeur, 44 px de haut, icône seule.
+  // Le libellé reste lu par les lecteurs d'écran (aria-label).
   return (
     <Button
       type="button"
       variant="ghost"
-      size="icon"
       onClick={handleClick}
       aria-label={libelle}
+      // data-actif sert au style (le libellé dit déjà l'état).
+      data-actif={estDansLaSacoche ? "true" : undefined}
       title={libelle}
-      className="rounded-full bg-background/80 shadow"
+      className="min-h-11 w-full rounded-xl bg-accent/60 text-muted-foreground hover:bg-accent hover:text-foreground data-[actif=true]:bg-primary data-[actif=true]:text-primary-foreground data-[actif=true]:hover:bg-primary/85 data-[actif=true]:hover:text-primary-foreground"
     >
-      <Backpack
-        className={estDansLaSacoche ? "fill-secondary text-secondary-foreground" : "text-muted-foreground"}
-      />
+      <Backpack />
     </Button>
   );
 }

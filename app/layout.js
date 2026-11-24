@@ -1,20 +1,27 @@
-import { Darker_Grotesque, Rubik } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { getPokemonList } from "@/lib/pokeapi";
 
-// Direction visuelle "Holo Arcade" : Darker Grotesque pour les titres et
-// numéros, Rubik pour l'interface et le texte courant.
-const fontDisplay = Darker_Grotesque({
+// Design doux et ergonomique :
+// - Bricolage Grotesque pour les titres (chaleureuse, largeur normale) ;
+// - Instrument Sans pour l'interface et le texte courant ;
+// - JetBrains Mono pour les numéros (#0025) et compteurs.
+const fontDisplay = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800", "900"],
+  axes: ["opsz"],
 });
 
-const fontSans = Rubik({
+const fontSans = Instrument_Sans({
   variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+const fontMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -36,13 +43,21 @@ export default async function RootLayout({ children }) {
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${fontDisplay.variable} ${fontSans.variable} h-full antialiased`}
+      className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {/* Header = rail latéral fixe (desktop) + bandeau et dock (mobile). */}
           <Header namesById={namesById} />
-          {children}
-          <Toaster />
+          {/* Zone principale : chaque page y rend son propre
+              <main id="main-content">. On la décale de la largeur du rail
+              en desktop (lg:pl-rail), et on lui laisse de la place en bas
+              en mobile pour ne pas passer sous le dock flottant. */}
+          <div className="flex flex-1 flex-col pb-28 lg:pb-0 lg:pl-rail">
+            {children}
+          </div>
+          {/* Sur mobile, les toasts s'affichent au-dessus du dock. */}
+          <Toaster mobileOffset={{ bottom: "6.5rem" }} />
         </ThemeProvider>
       </body>
     </html>

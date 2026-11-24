@@ -1,15 +1,20 @@
-// Poké Ball en SVG maison (pas l'image officielle). Purement décorative par
-// défaut (aria-hidden), sauf si on lui donne un aria-label explicite.
+// Poké Ball en SVG maison (pas l'image officielle), version douce et
+// arrondie : moitié haute de la couleur `color` (currentColor par défaut,
+// donc text-primary = accent), moitié basse claire, bande centrale et bouton.
+// Le contour suit la couleur du texte du thème (stroke-foreground) : lisible
+// en clair comme en sombre.
+// Purement décorative par défaut (aria-hidden), sauf si on lui donne un
+// aria-label explicite. API : size, color, className.
 export default function PokeBall({
   size = 24,
-  color = "currentColor",
+  color = "var(--primary)",
   className,
   "aria-label": ariaLabel,
   ...props
 }) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       width={size}
       height={size}
       className={className}
@@ -19,12 +24,15 @@ export default function PokeBall({
       focusable="false"
       {...props}
     >
-      <path d="M2 12a10 10 0 0 1 20 0z" fill={color} />
-      <path d="M2 12a10 10 0 0 0 20 0z" fill="#ffffff" />
-      <circle cx="12" cy="12" r="10" fill="none" stroke="#111318" strokeWidth="1.4" />
-      <rect x="2" y="11" width="20" height="2" fill="#111318" />
-      <circle cx="12" cy="12" r="3.2" fill="#ffffff" stroke="#111318" strokeWidth="1.4" />
-      <circle cx="12" cy="12" r="1.3" fill="#ffffff" />
+      {/* Moitié basse : fond de carte, pour rester claire en mode sombre. */}
+      <path d="M3 16a13 13 0 0 0 26 0z" className="fill-card" />
+      {/* Moitié haute : aplat de couleur. */}
+      <path d="M3 16a13 13 0 0 1 26 0z" fill={color} />
+
+      {/* Contour, bande centrale et bouton (traits arrondis). */}
+      <circle cx="16" cy="16" r="13" fill="none" className="stroke-foreground" strokeWidth="2" />
+      <line x1="3" y1="16" x2="29" y2="16" className="stroke-foreground" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="16" cy="16" r="4" className="fill-card stroke-foreground" strokeWidth="2" />
     </svg>
   );
 }

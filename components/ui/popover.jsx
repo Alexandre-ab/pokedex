@@ -35,8 +35,10 @@ function PopoverContent({
       >
         <PopoverPrimitive.Popup
           data-slot="popover-content"
+          // Style doux : grands angles arrondis, ombre flottante et
+          // fin liseré discret.
           className={cn(
-            "z-50 flex origin-(--transform-origin) flex-col gap-2 rounded-lg bg-popover p-3 text-sm text-popover-foreground shadow-lg ring-1 ring-foreground/10 outline-none duration-100 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-safe:transition motion-safe:data-ending-style:scale-95 motion-safe:data-starting-style:scale-95",
+            "z-50 flex origin-(--transform-origin) flex-col gap-2 rounded-2xl bg-popover p-3 text-sm text-popover-foreground shadow-float ring-1 ring-border outline-none duration-100 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-safe:transition motion-safe:data-ending-style:scale-95 motion-safe:data-starting-style:scale-95",
             className
           )}
           {...props}

@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { getPokemonList, getTypes, getTypeMap } from "@/lib/pokeapi";
 import FavoritesList from "@/components/FavoritesList";
 
@@ -17,13 +18,12 @@ export default async function FavorisPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8">
-      <main id="main-content" className="mx-auto max-w-6xl">
-        <h1 className="font-heading mb-6 text-center text-3xl font-bold text-foreground">
-          Mes favoris
-        </h1>
-        <FavoritesList pokemonList={pokemonWithTypes} />
-      </main>
-    </div>
+    <ViewTransition enter="slide-up" default="none">
+      <div className="min-h-screen bg-background px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-10">
+        <main id="main-content" className="mx-auto max-w-7xl">
+          <FavoritesList pokemonList={pokemonWithTypes} />
+        </main>
+      </div>
+    </ViewTransition>
   );
 }
