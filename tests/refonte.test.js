@@ -6,6 +6,7 @@ const readProjectFile = (path) =>
   readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
 const css = readProjectFile('../app/globals.css');
+const header = readProjectFile('../components/Header.js');
 const types = [
   'normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison',
   'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark',
@@ -72,5 +73,12 @@ describe('contrats du design ergonomique doux', () => {
 
   it('utilise useSyncExternalStore pour éviter une divergence d’hydratation du thème', () => {
     expect(readProjectFile('../components/ThemeToggle.js')).toMatch(/useSyncExternalStore/);
+  });
+
+  it('isole usePathname sous Suspense dans le Header', () => {
+    expect(header).toMatch(/import\s*\{[^}]*\bSuspense\b[^}]*\}\s*from\s*["']react["']/);
+    expect(header).toMatch(/import\s*\{[^}]*\busePathname\b[^}]*\}\s*from\s*["']next\/navigation["']/);
+    expect(header).toMatch(/function HeaderAvecChemin\([^)]*\)\s*\{[\s\S]*?const pathname = usePathname\(\)/);
+    expect(header).toMatch(/<Suspense\b[\s\S]*?<HeaderAvecChemin\b[\s\S]*?<\/Suspense>/);
   });
 });

@@ -46,4 +46,4 @@ npm run build
 
 ## Site en ligne
 
-Adresse à ajouter après déploiement sur Vercel.
+Déployé sur Vercel : [https://pokedex-delta-wine.vercel.app](https://pokedex-delta-wine.vercel.app)
