@@ -12,12 +12,13 @@ const STAT_LABELS = {
   speed: "Vitesse",
 };
 
-// Valeur de base maximale théorique, pour dessiner la barre à l'échelle.
-const STAT_MAX = 255;
+// Valeur qui remplit toute la piste (la plupart des stats sont sous 200 :
+// les barres sont ainsi plus parlantes ; les chiffres affichés restent les vrais).
+const STAT_MAX = 200;
 
 // Largeur d'une barre, en pourcentage de la piste.
 function largeur(valeur) {
-  return `${Math.min(100, (valeur / STAT_MAX) * 100)}%`;
+  return `${Math.min(1, valeur / STAT_MAX) * 100}%`;
 }
 
 // Statistiques de base : une ligne par stat (libellé | barre | valeur), puis
@@ -44,12 +45,12 @@ export default function StatBars({ stats, color }) {
         {stats.map((stat, index) => (
           <div key={stat.name} className="grid grid-cols-[5.5rem_1fr_2.5rem] items-center gap-3">
             <dt className="text-sm text-muted-foreground">{STAT_LABELS[stat.name] ?? stat.name}</dt>
-            <dd aria-hidden="true" className="h-3 overflow-hidden rounded-full bg-muted">
+            <dd aria-hidden="true" className="h-3 overflow-hidden rounded-full bg-muted ring-1 ring-inset ring-foreground/10">
               {/* Remplissage : seul scaleX est animé. */}
               <motion.span
-                className="block h-full origin-left rounded-full"
+                className="block h-full origin-left rounded-full ring-1 ring-inset ring-foreground/15"
                 style={{ width: largeur(stat.value), backgroundColor: couleurBarre }}
-                initial={{ scaleX: reduceMotion ? 1 : 0 }}
+                initial={reduceMotion ? false : { scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={
                   reduceMotion

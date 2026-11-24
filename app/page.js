@@ -21,7 +21,7 @@ export default async function Home() {
 
   return (
     <ViewTransition enter="slide-up" default="none">
-      <div className="min-h-screen bg-background px-4 pt-6 pb-10 sm:px-6 lg:px-10 lg:pt-10">
+      <div className="flex-1 bg-background px-4 pt-6 pb-10 sm:px-6 lg:px-10 lg:pt-10">
         <main id="main-content" className="mx-auto max-w-7xl">
           {/* En-tête : titre clair et une phrase d'accueil. */}
           <header className="pb-2">

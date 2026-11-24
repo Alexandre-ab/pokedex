@@ -51,12 +51,12 @@ export default function FavoritesList({ pokemonList }) {
       <div className="mt-6">
         {!hasHydrated ? (
           // Avant lecture du localStorage : un message neutre.
-          <p className="rounded-2xl bg-card px-6 py-14 text-center text-sm text-muted-foreground shadow-soft ring-1 ring-border">
+          <p className="rounded-2xl bg-card px-6 py-14 text-center text-sm text-muted-foreground shadow-soft dark:ring-1 dark:ring-border">
             Chargement de tes favoris…
           </p>
         ) : favoris.length === 0 ? (
           // État vide : doux, avec une action claire.
-          <div className="rounded-2xl bg-card px-6 py-14 text-center shadow-soft ring-1 ring-border">
+          <div className="rounded-2xl bg-card px-6 py-14 text-center shadow-soft dark:ring-1 dark:ring-border">
             <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Heart aria-hidden="true" className="size-6" />
             </span>

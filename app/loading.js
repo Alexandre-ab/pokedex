@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
   return (
     <ViewTransition exit="slide-down">
-      <div className="min-h-screen bg-background px-4 pt-6 pb-10 sm:px-6 lg:px-10 lg:pt-10">
+      <div className="flex-1 bg-background px-4 pt-6 pb-10 sm:px-6 lg:px-10 lg:pt-10">
         <main aria-busy="true" className="mx-auto max-w-7xl">
           <p className="sr-only">Chargement de l&apos;index…</p>
 

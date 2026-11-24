@@ -72,10 +72,10 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
   return (
     <div>
       {/* ============ Barre de recherche (reste visible au défilement) ============ */}
-      <div className="sticky top-0 z-20 bg-background/90 pt-3 pb-5 backdrop-blur-sm">
+      <div className="z-20 bg-background pt-3 pb-5 sm:sticky sm:top-4 sm:pt-0">
         <div
           role="search"
-          className="flex flex-wrap items-center gap-2 rounded-2xl bg-card p-2 shadow-soft ring-1 ring-border sm:flex-nowrap"
+          className="flex flex-wrap items-center gap-2 rounded-2xl bg-card p-2 shadow-soft dark:ring-1 dark:ring-border sm:flex-nowrap"
         >
           {/* --- Champ de recherche --- */}
           <label htmlFor="pokemon-search" className="sr-only">
@@ -95,14 +95,14 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Nom ou numéro, ex. Pikachu, 25"
-              className="min-h-11 flex-1 rounded-xl border-0 bg-accent/60 pr-11 pl-10 text-base shadow-none focus-visible:ring-2 dark:bg-accent/60"
+              className="min-h-11 flex-1 rounded-xl border border-input bg-background pr-12 pl-10 text-base shadow-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring dark:bg-background"
             />
             {rechercheActive && (
               <button
                 type="button"
                 onClick={effacerRecherche}
                 aria-label="Effacer la recherche"
-                className="absolute right-1 flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+                className="absolute right-0 flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
@@ -222,7 +222,7 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
 
       {/* ============ Résultats ============ */}
       {filteredList.length === 0 ? (
-        <div className="rounded-2xl bg-card px-6 py-14 text-center shadow-soft ring-1 ring-border">
+        <div className="rounded-2xl bg-card px-6 py-14 text-center shadow-soft dark:ring-1 dark:ring-border">
           <p className="font-heading text-2xl font-bold tracking-tight">
             Aucun Pokémon trouvé
           </p>
