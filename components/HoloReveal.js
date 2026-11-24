@@ -2,32 +2,34 @@
 
 import { motion, useReducedMotion } from "motion/react";
 
-// Halo "Holo Arcade" derrière l'illustration, dans la couleur du type fourni
-// (glowType). Les enfants, eux, ne sont PAS animés ici : leur entrée (et le
-// morph de l'image) est déjà gérée par <ViewTransition>, donc pas de double
-// animation superposée.
+// Halo lumineux doux autour de l'illustration, teinté au type principal
+// (glowType, ex. "fire"). Effet réservé à la fiche détaillée.
 //
-// Le halo apparaît en un seul fondu doux, une fois, puis reste fixe : pas de
-// boucle infinie (WCAG 2.2.2 interdit une animation décorative en boucle sans
-// moyen de l'arrêter). Avec prefers-reduced-motion, il apparaît directement
-// à son opacité finale, sans animation.
+// Les enfants (l'illustration) ne sont PAS animés ici : leur entrée et le
+// morph de l'image sont déjà gérés par <ViewTransition>, donc pas de double
+// animation superposée. Seul le halo (calque décoratif) bouge, une seule
+// fois : il apparaît en fondu et "respire" d'un léger zoom (opacité +
+// transform, pas de recalcul de mise en page). Pas de boucle infinie
+// (WCAG 2.2.2). Avec prefers-reduced-motion, il est affiché directement dans
+// son état final, sans animation.
 export default function HoloReveal({ children, glowType }) {
   const reduceMotion = useReducedMotion();
+  const couleur = glowType ? `var(--type-${glowType})` : "var(--rule-strong)";
 
   return (
     <div className="relative">
-      {glowType && (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute -inset-10 rounded-full blur-2xl"
-          style={{
-            background: `radial-gradient(circle, var(--type-${glowType}) 0%, transparent 70%)`,
-          }}
-          initial={{ opacity: reduceMotion ? 0.55 : 0 }}
-          animate={{ opacity: 0.55 }}
-          transition={reduceMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut" }}
-        />
-      )}
+      {/* Halo radial (le flou est un effet lourd, accepté ici : un seul par page). */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-10 rounded-full blur-2xl"
+        style={{ background: `radial-gradient(circle, ${couleur} 0%, transparent 68%)` }}
+        initial={reduceMotion ? false : { opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 0.45, scale: 1 }}
+        transition={
+          reduceMotion ? { duration: 0 } : { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
+        }
+      />
+
       <div className="relative">{children}</div>
     </div>
   );

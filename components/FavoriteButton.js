@@ -10,7 +10,8 @@ import { useFavoritesStore } from "@/store/favorites";
 // celui du client soient identiques.
 // "showLabel" : sur la fiche détaillée, le bouton affiche aussi un texte
 // ("Favori") et un style nettement différent selon l'état actif. Sur les
-// cartes de la grille (par défaut), il reste une simple icône ronde.
+// cartes de la grille (par défaut), il devient un bouton arrondi
+// et confortable (icône seule).
 export default function FavoriteButton({ id, showLabel = false }) {
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
   const isFavorite = useFavoritesStore((state) =>
@@ -43,19 +44,20 @@ export default function FavoriteButton({ id, showLabel = false }) {
     );
   }
 
+  // Version compacte (cartes de la grille) : un bouton arrondi
+  // de la carte — pleine largeur, 44 px de haut, icône seule. Le libellé reste lu par les lecteurs d'écran (aria-label).
   return (
     <Button
       type="button"
       variant="ghost"
-      size="icon"
       onClick={handleClick}
       aria-label={libelle}
+      // data-actif sert au style (le libellé dit déjà l'état).
+      data-actif={estFavori ? "true" : undefined}
       title={libelle}
-      className="rounded-full bg-background/80 shadow"
+      className="min-h-11 w-full rounded-xl bg-accent/60 text-muted-foreground hover:bg-accent hover:text-foreground data-[actif=true]:bg-primary/10 data-[actif=true]:text-primary"
     >
-      <Heart
-        className={estFavori ? "fill-destructive text-destructive" : "text-muted-foreground"}
-      />
+      <Heart className={estFavori ? "fill-current" : ""} />
     </Button>
   );
 }

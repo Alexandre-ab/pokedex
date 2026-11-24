@@ -10,6 +10,22 @@
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
   --font-heading: var(--font-display);
+  --font-mono: var(--font-mono);
+  /* Alias de compatibilité (les composants des tâches suivantes les
+     remplaceront peu à peu) : bg-paper, text-ink, border-rule, bg-vermilion.
+     Ils pointent maintenant vers la palette douce ci-dessous. */
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-vermilion: var(--vermilion);
+  --color-vermilion-foreground: var(--vermilion-foreground);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  /* Ombres très douces (élévation naturelle, jamais d'ombre dure). */
+  --shadow-soft: var(--soft-shadow);
+  --shadow-float: var(--float-shadow);
+  /* Largeur du rail latéral (desktop, w-60) : partagée par Header et layout. */
+  --spacing-rail: 15rem;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -86,46 +102,58 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Design "doux et ergonomique" — mode clair : fond neutre chaud, cartes
+   blanches, texte encre douce, un seul accent rouge Pokédex chaleureux.
+   Contrastes WCAG : texte/fond 16:1, texte atténué/fond 5,7:1, accent/fond
+   4,6:1, blanc sur accent 5:1. */
 :root {
-  /* Direction visuelle "Holo Arcade" — mode clair. */
-  --background: #edeff2;
-  --foreground: #14161a;
-  --card: #f5f6f8;
-  --card-foreground: #14161a;
-  --popover: #f5f6f8;
-  --popover-foreground: #14161a;
-  /* Une seule couleur d'accent globale : le rouge Pokédex, utilisée pour
-     primary/secondary/accent/ring (logo et compteurs de l'en-tête compris)
-     — plus de violet ni de turquoise comme accents génériques. Sur la
-     fiche détail, c'est la couleur du premier type qui sert d'accent
-     local (StatBars, halo), pas ces variables globales. */
-  --primary: #b3112b;
-  --primary-foreground: #ffffff;
-  --secondary: #b3112b;
-  --secondary-foreground: #ffffff;
-  --muted: #e2e4e9;
-  --muted-foreground: #5b5f6b;
-  --accent: #b3112b;
-  --accent-foreground: #ffffff;
-  --destructive: #e8384f;
-  --destructive-foreground: #fff5f6;
-  --border: #d7dae0;
-  --input: #d7dae0;
-  --ring: #b3112b;
-  --chart-1: #b3112b;
-  --chart-2: #a5b4fc;
-  --chart-3: #e8384f;
-  --chart-4: #5b5f6b;
-  --chart-5: #94a3b8;
-  --radius: 0.625rem;
-  --sidebar: #f5f6f8;
-  --sidebar-foreground: #14161a;
-  --sidebar-primary: #b3112b;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #b3112b;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #d7dae0;
-  --sidebar-ring: #b3112b;
+  --paper: #f7f6f3;
+  --paper-deep: #efede8;
+  --ink: #18181b;
+  --vermilion: #d62839;
+  --vermilion-foreground: #ffffff;
+  --rule: #e6e4df;
+  --rule-strong: #cfccc4;
+  /* Ombres : une très légère et une un peu plus ample (dock, tiroirs). */
+  --soft-shadow: 0 1px 2px rgb(24 24 27 / 0.05), 0 2px 8px rgb(24 24 27 / 0.04);
+  --float-shadow: 0 4px 24px rgb(24 24 27 / 0.1), 0 1px 3px rgb(24 24 27 / 0.06);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--vermilion);
+  --primary-foreground: var(--vermilion-foreground);
+  /* secondary reste l'accent (ex. sac rempli de TeamButton en fill-secondary). */
+  --secondary: var(--vermilion);
+  --secondary-foreground: var(--vermilion-foreground);
+  --muted: var(--paper-deep);
+  --muted-foreground: #5f6068;
+  /* accent = surface de survol douce (boutons ghost, menus). */
+  --accent: #f0eee9;
+  --accent-foreground: var(--ink);
+  --destructive: #c4222f;
+  --destructive-foreground: #ffffff;
+  --border: var(--rule);
+  --input: #d6d3cc;
+  --ring: var(--vermilion);
+  --chart-1: var(--vermilion);
+  --chart-2: #5f6068;
+  --chart-3: #9a978f;
+  --chart-4: #18181b;
+  --chart-5: #e6e4df;
+  /* Rayons généreux : 0.75rem de base (xl = 1,05rem, 2xl = 1,35rem). */
+  --radius: 0.75rem;
+  --sidebar: #fbfaf8;
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--vermilion);
+  --sidebar-primary-foreground: var(--vermilion-foreground);
+  --sidebar-accent: #f0eee9;
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--vermilion);
 
   /* Couleurs des 18 types de Pokémon — mode clair. */
   --type-normal: #9ca3af;
@@ -167,44 +195,51 @@
 }
 
 .dark {
-  /* Direction visuelle "Holo Arcade" — mode sombre. */
-  --background: #15111f;
-  --foreground: #eceaf5;
-  --card: #1c1730;
-  --card-foreground: #eceaf5;
-  --popover: #1c1730;
-  --popover-foreground: #eceaf5;
-  --primary: #b3112b;
-  --primary-foreground: #ffffff;
-  --secondary: #b3112b;
-  --secondary-foreground: #ffffff;
-  --muted: #241e38;
-  --muted-foreground: #b3adc9;
-  --accent: #b3112b;
-  --accent-foreground: #ffffff;
-  --destructive: #e8384f;
-  --destructive-foreground: #fff5f6;
-  --border: rgba(255, 255, 255, 0.12);
-  --input: rgba(255, 255, 255, 0.16);
-  /* --ring plus lumineux qu'--primary en mode sombre : #B3112B sur
-     #15111F ne tient que 2,68:1 (< 3:1 WCAG) pour un anneau de focus,
-     qui doit rester bien visible. #FF5C72 tient 6,21:1. --primary reste
-     inchangé (le contraste des compteurs/boutons, déjà blanc dessus, n'a
-     pas besoin d'être plus clair). */
-  --ring: #ff5c72;
-  --chart-1: #b3112b;
-  --chart-2: #818cf8;
-  --chart-3: #e8384f;
-  --chart-4: #b3adc9;
-  --chart-5: #6b7280;
-  --sidebar: #1c1730;
-  --sidebar-foreground: #eceaf5;
-  --sidebar-primary: #b3112b;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #b3112b;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.12);
-  --sidebar-ring: #ff5c72;
+  /* Mode sombre : charbon profond doux (pas de noir pur), texte clair doux,
+     accent lumineux. Contrastes : texte/fond 16:1, atténué/fond 7:1, accent
+     sur fond 6:1 (--ring >= 3:1), texte sombre sur accent 6,3:1. */
+  --paper: #111215;
+  --paper-deep: #1d2026;
+  --ink: #f3f4f6;
+  --vermilion: #ff5a6e;
+  --vermilion-foreground: #1a0509;
+  --rule: #272a32;
+  --rule-strong: #3a3e49;
+  --soft-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 8px rgb(0 0 0 / 0.2);
+  --float-shadow: 0 4px 24px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #181a1f;
+  --card-foreground: var(--ink);
+  --popover: #1d2026;
+  --popover-foreground: var(--ink);
+  --primary: var(--vermilion);
+  --primary-foreground: var(--vermilion-foreground);
+  --secondary: var(--vermilion);
+  --secondary-foreground: var(--vermilion-foreground);
+  --muted: var(--paper-deep);
+  --muted-foreground: #a1a6b0;
+  --accent: #23262d;
+  --accent-foreground: var(--ink);
+  --destructive: #ff6b78;
+  --destructive-foreground: #1a0509;
+  --border: var(--rule);
+  --input: #3a3e49;
+  --ring: var(--vermilion);
+  --chart-1: var(--vermilion);
+  --chart-2: #a1a6b0;
+  --chart-3: #5d6270;
+  --chart-4: #f3f4f6;
+  --chart-5: #272a32;
+  --sidebar: #14161a;
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--vermilion);
+  --sidebar-primary-foreground: var(--vermilion-foreground);
+  --sidebar-accent: #23262d;
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--vermilion);
 
   /* Couleurs des 18 types de Pokémon — mode sombre (même source, variantes
      plus lumineuses pour rester lisibles sur le fond quasi-noir). */
@@ -255,10 +290,32 @@
   }
   html {
     @apply font-sans;
+    /* Défilement doux pour les ancres (ex. lien d'évitement). */
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  /* Sélection de texte aux couleurs de l'accent. */
+  ::selection {
+    background: var(--vermilion);
+    color: var(--vermilion-foreground);
   }
 }
 
-/* Transitions de vue (ViewTransition) — direction "Holo Arcade".
+/* Étiquette discrète (numéros, compteurs) : mono, petite taille, chiffres
+   tabulaires pour que les compteurs ne "sautent" pas. Pas de majuscules
+   forcées : lecture confortable. */
+@utility text-index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* Transitions de vue (ViewTransition) — design doux.
    Fondu et glissement partent en même temps, avec la même courbe douce :
    plus de délai entre les deux (pas de "trou" visuel entre l'ancienne et la
    nouvelle vue), et des durées courtes et cohérentes. */
@@ -366,5 +423,5 @@
    qu'il ne les a pas encore mesurées. */
 .pokemon-card {
   content-visibility: auto;
-  contain-intrinsic-size: auto 260px;
+  contain-intrinsic-size: auto 330px;
 }

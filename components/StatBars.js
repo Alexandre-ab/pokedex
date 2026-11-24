@@ -15,55 +15,61 @@ const STAT_LABELS = {
 // Valeur de base maximale théorique, pour dessiner la barre à l'échelle.
 const STAT_MAX = 255;
 
-// Tableau de statistiques (libellé | barre pleine largeur | valeur), avec
-// une ligne Total. Les barres se remplissent en cascade, une seule fois,
-// dans la couleur du premier type ("color", ex. "fire"). Avec
-// prefers-reduced-motion, elles apparaissent directement à leur valeur
-// finale, sans animation.
+// Largeur d'une barre, en pourcentage de la piste.
+function largeur(valeur) {
+  return `${Math.min(100, (valeur / STAT_MAX) * 100)}%`;
+}
+
+// Statistiques de base : une ligne par stat (libellé | barre | valeur), puis
+// le total (BST) discret.
+//
+// Les barres arrondies se remplissent en cascade, une seule fois, dans la
+// couleur du premier type ("color", ex. "fire"). Seul `scaleX` est animé (la
+// largeur finale est fixe) : transformation composite, sans recalcul de mise
+// en page. Avec prefers-reduced-motion, elles s'affichent directement à leur
+// valeur finale.
 export default function StatBars({ stats, color }) {
   const reduceMotion = useReducedMotion();
   const total = stats.reduce((somme, stat) => somme + stat.value, 0);
   const couleurBarre = color ? `var(--type-${color})` : "var(--foreground)";
 
   return (
-    <div className="mt-6 flex flex-col gap-2">
-      {stats.map((stat, index) => {
-        const pourcentage = Math.min(100, (stat.value / STAT_MAX) * 100);
-        return (
-          <div
-            key={stat.name}
-            className="grid grid-cols-[5rem_1fr_2.5rem] items-center gap-3 text-xs"
-          >
-            <span className="text-muted-foreground">
-              {STAT_LABELS[stat.name] ?? stat.name}
-            </span>
-            <div className="h-2 w-full rounded-full bg-muted">
-              {/* La largeur finale est fixe (style) ; seul `scaleX` est
-                  animé — une transformation composite, qui ne déclenche
-                  pas de recalcul de layout, contrairement à `width`. */}
-              <motion.div
-                className="h-2 origin-left rounded-full"
-                style={{ width: `${pourcentage}%`, backgroundColor: couleurBarre }}
+    <section aria-labelledby="titre-mesures" className="mt-8">
+      <h2 id="titre-mesures" className="font-heading text-lg font-semibold tracking-tight">
+        Statistiques de base
+      </h2>
+
+      {/* Libellé et valeur sont du vrai texte ; la barre est décorative. */}
+      <dl className="mt-4 flex flex-col gap-3">
+        {stats.map((stat, index) => (
+          <div key={stat.name} className="grid grid-cols-[5.5rem_1fr_2.5rem] items-center gap-3">
+            <dt className="text-sm text-muted-foreground">{STAT_LABELS[stat.name] ?? stat.name}</dt>
+            <dd aria-hidden="true" className="h-3 overflow-hidden rounded-full bg-muted">
+              {/* Remplissage : seul scaleX est animé. */}
+              <motion.span
+                className="block h-full origin-left rounded-full"
+                style={{ width: largeur(stat.value), backgroundColor: couleurBarre }}
                 initial={{ scaleX: reduceMotion ? 1 : 0 }}
                 animate={{ scaleX: 1 }}
                 transition={
                   reduceMotion
                     ? { duration: 0 }
-                    : { duration: 0.6, delay: index * 0.08, ease: "easeOut" }
+                    : { duration: 0.6, delay: 0.15 + index * 0.07, ease: [0.22, 1, 0.36, 1] }
                 }
               />
-            </div>
-            <span className="text-right font-medium text-foreground">
+            </dd>
+            <dd className="text-right font-mono text-sm font-medium text-foreground tabular-nums">
               {stat.value}
-            </span>
+            </dd>
           </div>
-        );
-      })}
-      <div className="grid grid-cols-[5rem_1fr_2.5rem] items-center gap-3 border-t border-border pt-2 text-xs font-semibold text-foreground">
-        <span>Total</span>
-        <span />
-        <span className="text-right">{total}</span>
-      </div>
-    </div>
+        ))}
+      </dl>
+
+      {/* Total des statistiques de base (BST), discret. */}
+      <p className="mt-4 flex items-baseline justify-between border-t border-border pt-3 text-sm text-muted-foreground">
+        <span>Total (BST)</span>
+        <span className="font-mono text-base font-semibold text-foreground tabular-nums">{total}</span>
+      </p>
+    </section>
   );
 }
