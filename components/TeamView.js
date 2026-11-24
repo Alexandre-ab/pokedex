@@ -18,7 +18,7 @@ function EmplacementOccupe({ pokemon, rang, onRetirer }) {
   const couleurType = `var(--type-${premierType})`;
 
   return (
-    <article className="group flex flex-col rounded-2xl bg-card p-3 shadow-soft ring-1 ring-border">
+    <article className="group flex flex-col rounded-2xl bg-card p-3 shadow-soft dark:ring-1 dark:ring-border">
       <Link
         href={`/pokemon/${pokemon.id}`}
         transitionTypes={["nav-forward"]}
@@ -183,7 +183,7 @@ export default function TeamView({ pokemonList }) {
       </ol>
 
       {/* Synthèse des types de l'équipe. */}
-      <div className="mt-8 rounded-2xl bg-card p-4 shadow-soft ring-1 ring-border sm:p-5">
+      <div className="mt-8 rounded-2xl bg-card p-4 shadow-soft dark:ring-1 dark:ring-border sm:p-5">
         <h2 className="font-heading text-lg font-semibold tracking-tight">Types de l&apos;équipe</h2>
         {typesEquipe.length === 0 ? (
           <p className="mt-2 text-sm text-muted-foreground">

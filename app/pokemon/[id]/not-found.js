@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 // une carte douce avec un message clair et un bouton pour revenir à l'index.
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-background px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-10">
+    <div className="flex-1 bg-background px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-10">
       <main id="main-content" className="mx-auto max-w-3xl">
-        <div className="rounded-2xl bg-card px-6 py-16 text-center shadow-soft ring-1 ring-border">
+        <div className="rounded-2xl bg-card px-6 py-16 text-center shadow-soft dark:ring-1 dark:ring-border">
           <p aria-hidden="true" className="font-heading text-7xl leading-none font-bold text-muted-foreground/40">
             ?
           </p>

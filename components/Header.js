@@ -98,6 +98,9 @@ function HeaderContenu({ namesById, pathname }) {
     (_, index) => equipe[index] ?? null
   );
 
+  // Total de l'index, calculé depuis les noms reçus (repli sur 1025).
+  const totalIndex = Object.keys(namesById).length || 1025;
+
   // Les entrées du sommaire (rail desktop). "compteur" est affiché en mono ;
   // "lecteur" est la version lue par les lecteurs d'écran.
   const liens = [
@@ -105,14 +108,14 @@ function HeaderContenu({ namesById, pathname }) {
       href: "/",
       label: "Index",
       Icone: Library,
-      compteur: "1025",
-      lecteur: "1 025 Pokémon",
+      compteur: String(totalIndex),
+      lecteur: `${totalIndex} Pokémon`,
     },
     {
       href: "/favoris",
       label: "Favoris",
       Icone: Heart,
-      compteur: String(nombreFavoris).padStart(3, "0"),
+      compteur: String(nombreFavoris),
       lecteur: `${nombreFavoris} favori${nombreFavoris > 1 ? "s" : ""}`,
     },
     {
@@ -199,7 +202,7 @@ function HeaderContenu({ namesById, pathname }) {
             Un clic (n'importe où sur le bloc) ouvre le tiroir de la sacoche. */}
         <SheetTrigger
           aria-label={libelleApercu}
-          className="group/equipe block w-full rounded-2xl border border-border bg-card p-4 text-left shadow-soft hover:border-rule-strong focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none motion-safe:transition-colors motion-safe:duration-200"
+          className="group/equipe block w-full rounded-2xl border border-border bg-card p-4 text-left shadow-soft hover:border-rule-strong focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none motion-safe:transition-colors motion-safe:duration-200"
         >
           <span className="flex items-center justify-between">
             <span className="text-sm font-semibold text-foreground">Mon équipe</span>
@@ -251,7 +254,7 @@ function HeaderContenu({ namesById, pathname }) {
         aria-label="Navigation principale"
         className="fixed inset-x-4 bottom-4 z-40 mx-auto max-w-sm lg:hidden"
       >
-        <ul className="grid grid-cols-3 gap-1 rounded-full border border-border bg-card/95 p-1.5 shadow-float backdrop-blur-sm">
+        <ul className="grid grid-cols-3 gap-1 rounded-full border border-border bg-card p-1.5 shadow-float">
           {liens.slice(0, 2).map(({ href, label, Icone, lecteur }) => (
             <li key={href}>
               <Link
@@ -280,7 +283,7 @@ function HeaderContenu({ namesById, pathname }) {
             <SheetTrigger
               aria-label={libelleApercu}
               data-actif={pathname === "/sacoche" ? "true" : undefined}
-              className="flex h-14 w-full flex-col items-center justify-center gap-0.5 rounded-full text-xs font-medium text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none data-[actif=true]:bg-accent data-[actif=true]:font-semibold data-[actif=true]:text-foreground motion-safe:transition-colors motion-safe:duration-200"
+              className="flex h-14 w-full flex-col items-center justify-center gap-0.5 rounded-full text-xs font-medium text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none data-[actif=true]:bg-accent data-[actif=true]:font-semibold data-[actif=true]:text-foreground motion-safe:transition-colors motion-safe:duration-200"
             >
               <span className="relative">
                 <Backpack className="size-5" aria-hidden="true" />

@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 // droite) pour que rien ne "saute" quand les données arrivent.
 export default function PokemonDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-background px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-8">
+    <div className="flex-1 bg-background px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-8">
       <main aria-busy="true" className="mx-auto max-w-6xl">
         {/* Annoncé aux lecteurs d'écran pendant le chargement. */}
         <p className="sr-only">Chargement de la fiche…</p>
@@ -16,9 +16,9 @@ export default function PokemonDetailSkeleton() {
           <Skeleton className="h-4 w-36 rounded-full" />
         </div>
 
-        <div className="mt-3 grid gap-2 rounded-3xl bg-card p-2 shadow-soft ring-1 ring-border lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+        <div className="mt-3 grid overflow-hidden rounded-3xl bg-card shadow-soft dark:ring-1 dark:ring-border lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
           {/* Visuel + navigation. */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 p-2">
             <div className="flex aspect-square flex-1 items-center justify-center rounded-2xl bg-muted sm:aspect-[5/4] lg:aspect-auto lg:min-h-[28rem]">
               <Skeleton className="size-56 rounded-full sm:size-64 lg:size-72" />
             </div>

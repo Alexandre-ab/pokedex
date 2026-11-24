@@ -1,9 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const readProjectFile = (path) =>
   readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
+
+const projectRoot = fileURLToPath(new URL('..', import.meta.url));
+function listSourceFiles(directory, excludedDirectory) {
+  return readdirSync(`${projectRoot}/${directory}`, { withFileTypes: true }).flatMap((entry) => {
+    if (entry.isDirectory()) {
+      if (entry.name === excludedDirectory) return [];
+      return listSourceFiles(`${directory}/${entry.name}`, excludedDirectory);
+    }
+    return /\.(js|jsx)$/.test(entry.name) ? [`${directory}/${entry.name}`] : [];
+  });
+}
 
 const css = readProjectFile('../app/globals.css');
 const header = readProjectFile('../components/Header.js');
@@ -14,6 +26,27 @@ const types = [
 ];
 
 describe('contrats du design ergonomique doux', () => {
+  it('retire min-h-screen du code applicatif hors composants UI', () => {
+    for (const file of [...listSourceFiles('app'), ...listSourceFiles('components', 'ui')]) {
+      expect(readFileSync(`${projectRoot}/${file}`, 'utf8'), file).not.toContain('min-h-screen');
+    }
+  });
+
+  it('renforce le focus des filtres et garde une cible tactile de 44 px', () => {
+    const grid = readProjectFile('../components/PokemonGrid.js');
+    expect(grid).not.toContain('ring-ring/50');
+    expect(header).not.toContain('ring-ring/50');
+    expect(grid).toMatch(/className="size-11 rounded-2xl hover:bg-accent"[\s\S]*?aria-label="Effacer le filtre de type"/);
+  });
+
+  it('borne la largeur visuelle des stats sans modifier le total BST ni l’animation', () => {
+    const stats = readProjectFile('../components/StatBars.js');
+    expect(stats).toMatch(/const STAT_MAX = 200/);
+    expect(stats).toMatch(/Math\.min\(1,\s*valeur\s*\/\s*STAT_MAX\)/);
+    expect(stats).toMatch(/const total = stats\.reduce\(/);
+    expect(stats).toMatch(/animate=\{\{\s*scaleX:\s*1\s*\}\}/);
+  });
+
   it('définit les couleurs et couleurs de texte des 18 types en clair et sombre', () => {
     const rootBlock = css.match(/:root\s*\{([\s\S]*?)\n\}/)?.[1] ?? '';
     const darkBlock = css.match(/\.dark\s*\{([\s\S]*?)\n\}/)?.[1] ?? '';

@@ -114,12 +114,12 @@ async function PokemonDetail({ paramsPromise }) {
 
   // Style commun des liens Précédent / Suivant (cible min-h-11).
   const styleLienVoisin =
-    "group flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-xl bg-card/80 px-3 py-2 text-sm shadow-soft ring-1 ring-border hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+    "group flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-xl bg-card/80 px-3 py-2 text-sm shadow-soft dark:ring-1 dark:ring-border hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
   const styleTouche =
     "inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md bg-muted px-1 font-mono text-xs text-muted-foreground";
 
   return (
-    <div className="min-h-screen bg-background px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-8">
+    <div className="flex-1 bg-background px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-8">
       <main id="main-content" className="mx-auto max-w-6xl">
         {/* Flèches ← / → du clavier pour changer de Pokémon. */}
         <PokemonKeyboardNav prevId={prev?.id ?? null} nextId={next?.id ?? null} />
@@ -144,10 +144,10 @@ async function PokemonDetail({ paramsPromise }) {
         <CardTransition id={pokemon.id}>
           <article
             aria-labelledby="nom-pokemon"
-            className="mt-3 grid gap-2 rounded-3xl bg-card p-2 shadow-soft ring-1 ring-border lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
+            className="mt-3 grid overflow-hidden rounded-3xl bg-card shadow-soft dark:ring-1 dark:ring-border lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
           >
             {/* ================= Colonne de gauche : le visuel ================= */}
-            <section aria-label="Illustration" className="flex flex-col gap-2">
+            <section aria-label="Illustration" className="flex flex-col gap-2 p-2">
               <div
                 className="relative flex aspect-square flex-1 items-center justify-center overflow-hidden rounded-2xl sm:aspect-[5/4] lg:aspect-auto lg:min-h-[28rem]"
                 style={{
@@ -211,11 +211,9 @@ async function PokemonDetail({ paramsPromise }) {
 
             {/* ================= Colonne de droite : les informations ================= */}
             <section aria-label="Informations" className="flex flex-col p-4 sm:p-6">
-              <p className="text-index text-muted-foreground">#{numero}</p>
-
               <h1
                 id="nom-pokemon"
-                className="mt-1 font-heading text-4xl leading-tight font-bold tracking-tight break-words text-foreground sm:text-5xl"
+                className="font-heading text-4xl leading-tight font-bold tracking-tight break-words text-foreground sm:text-5xl"
               >
                 {pokemon.name}
               </h1>
