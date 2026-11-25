@@ -85,7 +85,7 @@ function EmplacementOccupe({ pokemon, rang, onRetirer }) {
 function EmplacementLibre({ rang }) {
   return (
     <Link
-      href="/"
+      href="/#catalogue"
       className="flex min-h-48 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-rule-strong px-4 py-6 text-center text-muted-foreground hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <span className="flex size-11 items-center justify-center rounded-full bg-muted">

@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Search, ChevronDown, X, Check } from "lucide-react";
 import { searchPokemon, filterByType } from "@/lib/filters";
 import { TYPE_STYLES } from "@/lib/typeStyles";
+import { EVENEMENT_CHOIX_TYPE } from "@/lib/vitrine";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +29,22 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
   const [open, setOpen] = useState(false);
   // Pour remettre le curseur dans le champ après "Effacer la recherche".
   const champRef = useRef(null);
+
+  // Le nuancier des types de la vitrine envoie « pokedex:select-type » :
+  // on pré-sélectionne ce type et on vide la recherche (sinon le résultat
+  // pourrait être vide). Événement du navigateur : pas d'état partagé ni
+  // de paramètre d'URL, la page d'accueil reste statique.
+  useEffect(() => {
+    function surChoixType(evenement) {
+      const type = evenement.detail?.type;
+      if (!typeMap[type]) return; // type inconnu : on ignore
+      setSelectedType(type);
+      setQuery("");
+      setOpen(false);
+    }
+    window.addEventListener(EVENEMENT_CHOIX_TYPE, surChoixType);
+    return () => window.removeEventListener(EVENEMENT_CHOIX_TYPE, surChoixType);
+  }, [typeMap]);
 
   // Nom français d'un type (repli sur l'identifiant de l'API).
   const typeLabel = (type) => TYPE_STYLES[type]?.label ?? type;
@@ -140,7 +157,7 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
 
               {/* Filtre : 18 types en grille 3 × 6, pastilles arrondies
                   (point de couleur + nom + nombre de Pokémon). */}
-              <PopoverContent className="w-[20.5rem] max-w-[calc(100vw-2rem)] gap-3 p-4">
+              <PopoverContent data-lenis-prevent className="w-[20.5rem] max-w-[calc(100vw-2rem)] gap-3 p-4">
                 <div className="flex min-h-6 items-center justify-between">
                   <PopoverTitle className="text-sm font-semibold">
                     Filtrer par type

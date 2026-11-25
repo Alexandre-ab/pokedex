@@ -13,26 +13,10 @@ import HoloReveal from "@/components/HoloReveal";
 import StatBars from "@/components/StatBars";
 import PokemonDetailSkeleton from "@/components/PokemonDetailSkeleton";
 import PokemonKeyboardNav from "@/components/PokemonKeyboardNav";
+import { trouverGeneration } from "@/lib/vitrine";
 
-// Générations : dernier numéro de chaque génération et sa région d'origine.
-// Valeurs fixes (elles ne changent qu'avec une nouvelle génération), ce qui
-// évite un appel réseau de plus juste pour cette information.
-const GENERATIONS = [
-  { fin: 151, numero: "I", region: "Kanto" },
-  { fin: 251, numero: "II", region: "Johto" },
-  { fin: 386, numero: "III", region: "Hoenn" },
-  { fin: 493, numero: "IV", region: "Sinnoh" },
-  { fin: 649, numero: "V", region: "Unys" },
-  { fin: 721, numero: "VI", region: "Kalos" },
-  { fin: 809, numero: "VII", region: "Alola" },
-  { fin: 905, numero: "VIII", region: "Galar" },
-  { fin: 1025, numero: "IX", region: "Paldea" },
-];
-
-// Génération d'un Pokémon à partir de son numéro (1 à 1025).
-function trouverGeneration(id) {
-  return GENERATIONS.find((generation) => id <= generation.fin) ?? GENERATIONS.at(-1);
-}
+// Générations (plages et régions) : source unique dans lib/vitrine.js,
+// partagée avec la frise de la page d'accueil.
 
 // Numéro sur 4 chiffres : 25 -> "0025" (comme sur les cartes).
 function numeroArchive(id) {
@@ -126,8 +110,9 @@ async function PokemonDetail({ paramsPromise }) {
 
         {/* Retour à l'index + position dans le catalogue. */}
         <div className="flex items-center justify-between gap-4">
+          {/* Retour directement au catalogue (ancre #catalogue), sous la vitrine. */}
           <Link
-            href="/"
+            href="/#catalogue"
             transitionTypes={["nav-back"]}
             className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
