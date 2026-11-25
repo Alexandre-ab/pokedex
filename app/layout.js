@@ -1,4 +1,9 @@
-import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  Fraunces,
+  Instrument_Sans,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
@@ -6,13 +11,24 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { getPokemonList } from "@/lib/pokeapi";
 
 // Design doux et ergonomique :
-// - Bricolage Grotesque pour les titres (chaleureuse, largeur normale) ;
+// - Bricolage Grotesque pour les titres (chaleureuse). On charge aussi son
+//   axe de largeur "wdth" : la vitrine l'utilise condensée (wdth 75) pour
+//   ses grands titres en capitales ;
+// - Fraunces italique pour LE mot mis en scène dans un titre de la vitrine
+//   (axes SOFT et WONK : italique douce et un peu bancale) ;
 // - Instrument Sans pour l'interface et le texte courant ;
 // - JetBrains Mono pour les numéros (#0025) et compteurs.
 const fontDisplay = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
-  axes: ["opsz"],
+  axes: ["opsz", "wdth"],
+});
+
+const fontAccent = Fraunces({
+  variable: "--font-accent",
+  subsets: ["latin"],
+  style: ["italic"],
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
 const fontSans = Instrument_Sans({
@@ -43,7 +59,7 @@ export default async function RootLayout({ children }) {
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable} h-full antialiased`}
+      className={`${fontDisplay.variable} ${fontAccent.variable} ${fontSans.variable} ${fontMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

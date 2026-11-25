@@ -11,6 +11,9 @@
   --font-display: var(--font-display);
   --font-heading: var(--font-display);
   --font-mono: var(--font-mono);
+  /* Fraunces italique : le mot-clé mis en scène dans les titres de la
+     vitrine (un seul par titre). Classe Tailwind : font-accent. */
+  --font-accent: var(--font-accent);
   /* Alias de compatibilité (les composants des tâches suivantes les
      remplaceront peu à peu) : bg-paper, text-ink, border-rule, bg-vermilion.
      Ils pointent maintenant vers la palette douce ci-dessous. */
@@ -21,6 +24,12 @@
   --color-vermilion-foreground: var(--vermilion-foreground);
   --color-rule: var(--rule);
   --color-rule-strong: var(--rule-strong);
+  /* Surfaces et encres sombres de la vitrine (bg-vitrine-nuit, ...). */
+  --color-vitrine-nuit: var(--vitrine-nuit);
+  --color-vitrine-abysse: var(--vitrine-abysse);
+  --color-vitrine-os: var(--vitrine-os);
+  --color-vitrine-brume: var(--vitrine-brume);
+  --color-vitrine-filet: var(--vitrine-filet);
   /* Ombres très douces (élévation naturelle, jamais d'ombre dure). */
   --shadow-soft: var(--soft-shadow);
   --shadow-float: var(--float-shadow);
@@ -117,6 +126,15 @@
   /* Ombres : une très légère et une un peu plus ample (dock, tiroirs). */
   --soft-shadow: 0 1px 2px rgb(24 24 27 / 0.05), 0 2px 8px rgb(24 24 27 / 0.04);
   --float-shadow: 0 4px 24px rgb(24 24 27 / 0.1), 0 1px 3px rgb(24 24 27 / 0.06);
+  /* Vitrine « Lentille » (docs/STYLE_GUIDE.md, section 2.1) : nuit et
+     abysse pour les sections sombres, os et brume pour le texte posé
+     dessus, filet pour les contours décoratifs. Contrastes mesurés :
+     os/nuit 14,07:1, brume/nuit 6,80:1, os/abysse 15,24:1. */
+  --vitrine-nuit: #14161f;
+  --vitrine-abysse: #0b0c10;
+  --vitrine-os: #e7e3d8;
+  --vitrine-brume: #9a9fab;
+  --vitrine-filet: #5d6270;
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -207,6 +225,13 @@
   --rule-strong: #3a3e49;
   --soft-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 8px rgb(0 0 0 / 0.2);
   --float-shadow: 0 4px 24px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
+  /* Vitrine en sombre : l'alternance devient une alternance de profondeur
+     (papier #111215 -> nuit relevée -> abysse). */
+  --vitrine-nuit: #1a1d27;
+  --vitrine-abysse: #07080b;
+  --vitrine-os: #f3f4f6;
+  --vitrine-brume: #a1a6b0;
+  --vitrine-filet: #5d6270;
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -324,6 +349,8 @@
   --duration-enter: 260ms;
   --duration-move: 260ms;
   --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Courbe « expo out » de la vitrine : ouverture de la lentille, titres. */
+  --ease-lens: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fade {
@@ -424,4 +451,172 @@
 .pokemon-card {
   content-visibility: auto;
   contain-intrinsic-size: auto 330px;
+}
+
+/* ===================== Vitrine « Lentille » (hero) =====================
+   Échelle typographique de docs/STYLE_GUIDE.md (section 3). Les titres
+   utilisent Bricolage Grotesque condensée (axe wdth à 75) en capitales. */
+
+/* Titre du hero : capitales condensées et serrées. */
+@utility titre-impact {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.2rem + 5.4vw, 6.75rem);
+  font-weight: 800;
+  font-variation-settings: "wdth" 75;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Numéro géant posé DERRIÈRE le spécimen (décoratif, aria-hidden). */
+@utility chiffre-monument {
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 2rem + 17vw, 17rem);
+  font-weight: 800;
+  font-variation-settings: "wdth" 75;
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Le mot mis en scène (un seul par titre) : Fraunces italique, douce
+   (SOFT 100) et un peu « bancale » (WONK 1), en casse normale. Un peu plus
+   grand que les capitales voisines pour paraître de même taille. */
+@utility mot-cle {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.06em;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--vermilion);
+}
+
+/* Aura de type : halo doux derrière le spécimen. La couleur est une
+   propriété CSS déclarée (@property) pour pouvoir la faire glisser d'un
+   type à l'autre en 500 ms quand on change de spécimen. */
+@property --aura-couleur {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+
+@utility aura-lentille {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--aura-couleur) 30%, transparent) 0%,
+    color-mix(in oklab, var(--aura-couleur) 12%, transparent) 55%,
+    transparent 100%
+  );
+  transition: --aura-couleur 500ms var(--ease-fluid);
+}
+
+/* A3 — Montée des lignes : chaque ligne du titre sort d'un masque
+   (overflow: clip sur le parent). Mots entiers, texte réel dans le DOM. */
+@keyframes lentille-montee {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* A4 — Éclosion du mot-clé : droit et sec -> italique doux et bancal,
+   encre -> vermillon. Une seule fois, à l'arrivée. */
+@keyframes lentille-eclosion {
+  from {
+    font-variation-settings: "SOFT" 0, "WONK" 0;
+    color: var(--ink);
+  }
+  to {
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    color: var(--vermilion);
+  }
+}
+
+/* ============ Vitrine — étape 2 : manifeste, frise, défilement doux ============ */
+
+/* Titre de section de la vitrine (--text-h2 du guide) : capitales un peu
+   moins condensées que le titre du hero. */
+@utility titre-section {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.2rem + 3.4vw, 4.5rem);
+  font-weight: 750;
+  font-variation-settings: "wdth" 80;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* A5 — Manifeste mot à mot. Le titre reçoit UNE variable, --progression
+   (0 -> 1, liée au scroll par motion). Chaque mot a son propre --debut et
+   calcule sa part de la révélation : 0 = brume, 1 = os. Seule la COULEUR
+   change (jamais l'opacité) : la brume est déjà lisible (6,80:1 sur la
+   nuit), l'os l'est encore plus (14:1). Sans JavaScript, --progression
+   vaut 1 : le texte est affiché dans son état final. */
+.mot-manifeste {
+  --part: clamp(0, (var(--progression, 1) - var(--debut, 0)) * 5, 1);
+  color: color-mix(
+    in oklab,
+    var(--vitrine-os) calc(var(--part) * 100%),
+    var(--vitrine-brume)
+  );
+}
+
+/* A4 — Le mot-clé du manifeste « éclot » au même rythme : il passe d'une
+   italique sèche (SOFT 0) à une italique douce (SOFT 100). Sa couleur reste
+   l'accent (#FF5A6E, 5,96:1 sur la nuit) du début à la fin. */
+.mot-manifeste-cle {
+  --part: clamp(0, (var(--progression, 1) - var(--debut, 0)) * 5, 1);
+  font-variation-settings: "SOFT" calc(var(--part) * 100), "WONK" 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mot-manifeste {
+    color: var(--vitrine-os);
+  }
+  .mot-manifeste-cle {
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+  }
+}
+
+/* Lenis (défilement doux, accueil seulement) : règles minimales de
+   lenis/dist/lenis.css. La classe .lenis n'existe sur <html> que tant que
+   Lenis tourne ; les autres pages ne sont pas concernées. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ============ Vitrine — étape 3 : panthéon des records ============ */
+
+/* Carte à œillet (docs/STYLE_GUIDE.md §6.4) : fond de carte percé d'un trou
+   rond près du coin bas-droit (masque CSS), où se loge la pastille du type.
+   Le masque est posé sur un calque de fond (et non sur le lien) : il ne
+   coupe donc ni le texte ni l'anneau de focus. */
+@utility carte-oeillet {
+  /* Préfixe -webkit- : Safari ne lit pas encore mask-image seul partout. */
+  -webkit-mask-image: radial-gradient(
+    circle at calc(100% - 2.25rem) calc(100% - 2.25rem),
+    transparent 2rem,
+    #000 calc(2rem + 0.5px)
+  );
+  mask-image: radial-gradient(
+    circle at calc(100% - 2.25rem) calc(100% - 2.25rem),
+    transparent 2rem,
+    #000 calc(2rem + 0.5px)
+  );
 }
