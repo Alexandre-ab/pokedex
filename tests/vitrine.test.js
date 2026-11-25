@@ -47,6 +47,10 @@ describe('contrats du Hero Lentille', () => {
     expect(hero).not.toMatch(/ViewTransition\s+name=["']pokemon-image-/);
   });
 
+  it('marque le motif SVG de fond comme décoratif et inaccessible au focus', () => {
+    expect(hero).toMatch(/<svg\s+aria-hidden="true"\s+focusable="false"[\s\S]*?<\/svg>/);
+  });
+
   it('charge le canvas dynamiquement sans SSR et borne le DPR', () => {
     expect(hero).toMatch(/dynamic\([\s\S]*?HeroLentilleCanvas[\s\S]*?ssr:\s*false/);
     expect(canvas).toContain('image.crossOrigin = "anonymous"');
@@ -166,7 +170,10 @@ describe('contrats de la page d’accueil et de navigation', () => {
 });
 
 describe('nuancier des types et records', () => {
+  const manifeste = source('../components/VitrineManifeste.js');
   const nuancier = source('../components/VitrineNuancierTypes.js');
+  const titreVitrine = source('../components/TitreVitrine.js');
+  const frise = source('../components/VitrineFriseGenerations.js');
   const records = source('../components/VitrineRecords.js');
   const grid = source('../components/PokemonGrid.js');
   const page = source('../app/page.js');
@@ -220,6 +227,48 @@ describe('nuancier des types et records', () => {
     expect(records).not.toContain('pokemon-image-');
     expect(records).toContain('records.map');
     expect(records).toContain('aria-labelledby="titre-records"');
+  });
+
+  it('respecte le contrat du titre animé et conserve son masque interne', () => {
+    expect(titreVitrine).toContain('useReducedMotion');
+    expect(titreVitrine).toMatch(/initial=\{reduit\s*\?\s*false\s*:\s*"cache"\}/);
+    expect(titreVitrine).toMatch(/viewport=\{\{\s*once:\s*true\s*,\s*amount:\s*0\.35\s*\}\}/);
+    expect(titreVitrine).toMatch(/<h2\b[^>]*>[\s\S]*?<span className="block overflow-clip pb-\[0\.1em\]">[\s\S]*?<\/h2>/);
+    expect(titreVitrine).not.toMatch(/<h2\b[^>]*className="[^"]*overflow-clip/);
+  });
+
+  it('branche le titre dans les sections vitrine et le catalogue', () => {
+    for (const component of [nuancier, frise, records, page]) {
+      expect(component).toContain('import TitreVitrine from "@/components/TitreVitrine"');
+      expect(component).toMatch(/<TitreVitrine\b/);
+    }
+    expect(records).not.toMatch(/^\s*["']use client["']/);
+  });
+
+  it('garde des marges latérales aux trois blocs sombres de la vitrine', () => {
+    expect(manifeste).toMatch(/className="[^"]*\bmx-3\b[^"]*bg-vitrine-nuit/);
+    expect(nuancier).toMatch(/className="[^"]*\bmx-3\b[^"]*bg-vitrine-nuit/);
+    expect(records).toMatch(/className="[^"]*\bmx-3\b[^"]*bg-vitrine-abysse/);
+  });
+
+  it('lie l’illustration détaillée au contrat chromatique et à la transition partagée', () => {
+    const artwork = source('../components/PokemonDetailArtwork.js');
+    expect(artwork).toContain('illustrationChromatique(id)');
+    expect(artwork).toMatch(/<ViewTransition\s+name=\{`pokemon-image-\$\{id\}`\}/);
+    expect(artwork).toContain('aria-pressed={chromatique}');
+    expect(artwork).toContain('onError={gererErreurShiny}');
+    expect(artwork).toContain('setIndisponible(true)');
+    expect(artwork).toContain('setChromatique(false)');
+    expect(artwork).toContain('motion-safe:');
+  });
+
+  it('intègre l’illustration dans une page non-async suspendue avec CardTransition', () => {
+    const detailPage = source('../app/pokemon/[id]/page.js');
+    expect(detailPage).toContain('import PokemonDetailArtwork from "@/components/PokemonDetailArtwork"');
+    expect(detailPage).toMatch(/export default function PokemonPage\(/);
+    expect(detailPage).not.toMatch(/export default async function PokemonPage\(/);
+    expect(detailPage).toMatch(/<Suspense\b[\s\S]*?<PokemonDetail paramsPromise=\{params\}\s*\/>[\s\S]*?<\/Suspense>/);
+    expect(detailPage).toMatch(/<CardTransition\b[\s\S]*?<PokemonDetailArtwork\b/);
   });
 
   it('place les sections dans l’ordre attendu jusqu’au catalogue', () => {
