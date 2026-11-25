@@ -48,11 +48,13 @@ function numeroArchive(id) {
   return String(id).padStart(4, "0");
 }
 
-// Un lien est "actif" si on est sur sa page. L'Index reste actif sur les
-// fiches détaillées (/pokemon/...), qui en font partie.
-function estActif(pathname, href) {
-  if (href === "/") return pathname === "/" || pathname.startsWith("/pokemon");
-  return pathname === href;
+// Un lien est "actif" si on est sur sa page. "page" est le chemin de la
+// page visée, sans ancre : le lien Index pointe vers "/#catalogue" mais sa
+// page est "/". L'Index reste actif sur les fiches détaillées
+// (/pokemon/...), qui en font partie.
+function estActif(pathname, page) {
+  if (page === "/") return pathname === "/" || pathname.startsWith("/pokemon");
+  return pathname === page;
 }
 
 // Petit composant qui lit l'URL. Avec `cacheComponents: true`, usePathname()
@@ -105,7 +107,9 @@ function HeaderContenu({ namesById, pathname }) {
   // "lecteur" est la version lue par les lecteurs d'écran.
   const liens = [
     {
-      href: "/",
+      // L'Index mène directement au catalogue, sous la vitrine de l'accueil.
+      href: "/#catalogue",
+      page: "/",
       label: "Index",
       Icone: Library,
       compteur: String(totalIndex),
@@ -113,6 +117,7 @@ function HeaderContenu({ namesById, pathname }) {
     },
     {
       href: "/favoris",
+      page: "/favoris",
       label: "Favoris",
       Icone: Heart,
       compteur: String(nombreFavoris),
@@ -120,6 +125,7 @@ function HeaderContenu({ namesById, pathname }) {
     },
     {
       href: "/sacoche",
+      page: "/sacoche",
       label: "Sacoche",
       Icone: Backpack,
       compteur: `${nombreDansLaSacoche}/${MAX_TEAM_SIZE}`,
@@ -142,6 +148,16 @@ function HeaderContenu({ namesById, pathname }) {
       >
         Passer au contenu principal
       </a>
+      {/* Sur l'accueil, un 2e lien d'évitement saute la vitrine et mène
+          directement au catalogue filtrable. */}
+      {pathname === "/" && (
+        <a
+          href="#catalogue"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-full focus:bg-primary focus:px-5 focus:py-2.5 focus:text-primary-foreground focus:shadow-float focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Aller au catalogue
+        </a>
+      )}
 
       {/* ============ MOBILE : bandeau supérieur léger (non fixe) ============ */}
       <header className="lg:hidden">
@@ -173,11 +189,11 @@ function HeaderContenu({ namesById, pathname }) {
             arrondie, compteur clair à droite. */}
         <nav aria-label="Navigation principale">
           <ul className="flex flex-col gap-1">
-            {liens.map(({ href, label, Icone, compteur, lecteur }) => (
+            {liens.map(({ href, page, label, Icone, compteur, lecteur }) => (
               <li key={href}>
                 <Link
                   href={href}
-                  aria-current={estActif(pathname, href) ? "page" : undefined}
+                  aria-current={estActif(pathname, page) ? "page" : undefined}
                   className="group/lien flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-foreground motion-safe:transition-colors motion-safe:duration-200"
                 >
                   <Icone
@@ -255,11 +271,11 @@ function HeaderContenu({ namesById, pathname }) {
         className="fixed inset-x-4 bottom-4 z-40 mx-auto max-w-sm lg:hidden"
       >
         <ul className="grid grid-cols-3 gap-1 rounded-full border border-border bg-card p-1.5 shadow-float">
-          {liens.slice(0, 2).map(({ href, label, Icone, lecteur }) => (
+          {liens.slice(0, 2).map(({ href, page, label, Icone, lecteur }) => (
             <li key={href}>
               <Link
                 href={href}
-                aria-current={estActif(pathname, href) ? "page" : undefined}
+                aria-current={estActif(pathname, page) ? "page" : undefined}
                 className="flex h-14 flex-col items-center justify-center gap-0.5 rounded-full text-xs font-medium text-muted-foreground aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-foreground motion-safe:transition-colors motion-safe:duration-200"
               >
                 <span className="relative">
@@ -303,7 +319,9 @@ function HeaderContenu({ namesById, pathname }) {
       </nav>
 
       {/* ============ Tiroir d'aperçu de la sacoche ============ */}
-      <SheetContent className="bg-card">
+      {/* data-lenis-prevent : le défilement doux de l'accueil ne touche pas au
+          défilement interne du tiroir. */}
+      <SheetContent data-lenis-prevent className="bg-card">
         <SheetHeader className="border-b border-border">
           <SheetTitle className="font-heading text-2xl font-bold">
             Sacoche ({nombreDansLaSacoche}/{MAX_TEAM_SIZE})

@@ -68,7 +68,7 @@ export default function FavoritesList({ pokemonList }) {
             </p>
             <Button
               variant="outline"
-              render={<Link href="/" />}
+              render={<Link href="/#catalogue" />}
               nativeButton={false}
               className="mt-6 min-h-11 rounded-xl px-5"
             >
