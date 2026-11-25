@@ -1,6 +1,5 @@
 import { Suspense, ViewTransition } from "react";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { parsePokemonId, getPokemonDetail, getPokemonList } from "@/lib/pokeapi";
@@ -9,7 +8,7 @@ import { formatMeasure, getPokemonNeighbors } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import FavoriteButton from "@/components/FavoriteButton";
 import TeamButton from "@/components/TeamButton";
-import HoloReveal from "@/components/HoloReveal";
+import PokemonDetailArtwork from "@/components/PokemonDetailArtwork";
 import StatBars from "@/components/StatBars";
 import PokemonDetailSkeleton from "@/components/PokemonDetailSkeleton";
 import PokemonKeyboardNav from "@/components/PokemonKeyboardNav";
@@ -59,7 +58,7 @@ export default function PokemonPage({ params }) {
 // Fiche détaillée (design ergonomique doux) : une grande carte arrondie à
 // deux colonnes.
 //   - À gauche : l'illustration sur un fond doux teinté au type principal,
-//     avec un halo lumineux (HoloReveal) et la navigation Précédent / Suivant.
+//     avec un halo lumineux et la bascule Chromatique (PokemonDetailArtwork), et la navigation Précédent / Suivant.
 //   - À droite : nom, types, description, mensurations en tuiles, boutons
 //     Favori / Sacoche, puis les statistiques de base.
 async function PokemonDetail({ paramsPromise }) {
@@ -139,20 +138,14 @@ async function PokemonDetail({ paramsPromise }) {
                   backgroundColor: `color-mix(in oklch, ${couleurType} 14%, var(--card))`,
                 }}
               >
-                <HoloReveal glowType={premierType}>
-                  {/* Élément partagé : la même image que sur la carte de la
-                      grille (même "name"), pour qu'elle glisse jusqu'ici. */}
-                  <ViewTransition name={`pokemon-image-${pokemon.id}`} share="pokemon-image-morph">
-                    <Image
-                      src={pokemon.image}
-                      alt={pokemon.name}
-                      width={320}
-                      height={320}
-                      className="h-56 w-56 object-contain drop-shadow-lg sm:h-64 sm:w-64 lg:h-80 lg:w-80"
-                      priority
-                    />
-                  </ViewTransition>
-                </HoloReveal>
+                {/* Illustration + bascule Normale / Chromatique (composant
+                    client) ; garde le morph partagé avec la carte du catalogue. */}
+                <PokemonDetailArtwork
+                  id={pokemon.id}
+                  nom={pokemon.name}
+                  imageNormale={pokemon.image}
+                  glowType={premierType}
+                />
               </div>
 
               {/* Précédent / Suivant : deux gros boutons confortables. */}
