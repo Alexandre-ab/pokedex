@@ -12,6 +12,7 @@ import {
   compterTypes,
   especesGeneration,
   formaterRecord,
+  separerMilliers,
   valeurRecord,
 } from "@/lib/vitrine";
 import HeroLentille from "@/components/HeroLentille";
@@ -20,6 +21,7 @@ import VitrineManifeste from "@/components/VitrineManifeste";
 import VitrineNuancierTypes from "@/components/VitrineNuancierTypes";
 import VitrineFriseGenerations from "@/components/VitrineFriseGenerations";
 import VitrineRecords from "@/components/VitrineRecords";
+import TitreVitrine from "@/components/TitreVitrine";
 import PokemonGrid from "@/components/PokemonGrid";
 
 // Page d'accueil : la vitrine « Lentille » en haut (hero plein écran,
@@ -119,17 +121,21 @@ export default async function Home() {
           className="scroll-mt-4 px-4 pt-6 pb-10 sm:px-6 lg:px-10 lg:pt-10"
         >
           <div className="mx-auto max-w-7xl">
-            {/* En-tête : titre clair et une phrase d'accueil. */}
+            {/* En-tête : même voix éditoriale que les sections de la vitrine
+                (titre-section + un mot-clé en Fraunces italique), puis une
+                phrase d'accueil. */}
             <header className="pb-2">
               {/* tabIndex -1 : le nuancier y place le focus après un choix de
                   type (focus programmatique seulement, hors tabulation). */}
-              <h2
+              <TitreVitrine
                 id="titre-catalogue"
                 tabIndex={-1}
-                className="rounded-lg font-heading outline-offset-4 focus-visible:outline-2 focus-visible:outline-ring text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
-              >
-                Catalogue
-              </h2>
+                surtitre="Catalogue"
+                debut="Explorer les"
+                motCle={`${separerMilliers(pokemonList.length)} espèces`}
+                fin=""
+                titreClassName="max-w-[18ch] rounded-lg text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              />
               <p className="mt-2 max-w-xl text-base text-muted-foreground">
                 Les {pokemonList.length} Pokémon à portée de main : cherche un
                 nom ou un numéro, ou filtre par type.

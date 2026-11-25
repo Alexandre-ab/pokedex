@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { ArrowDown } from "lucide-react";
 import { TYPE_STYLES } from "@/lib/typeStyles";
 import { EVENEMENT_CHOIX_TYPE } from "@/lib/vitrine";
+import TitreVitrine from "@/components/TitreVitrine";
 
 // ---------------------------------------------------------------------------
 // Nuancier vivant des 18 types (section « nuit », suite du manifeste).
@@ -42,7 +43,7 @@ export default function VitrineNuancierTypes({ comptes }) {
     // sections forment une seule « carte » sombre posée sur le papier.
     <section
       aria-labelledby="titre-nuancier"
-      className="relative isolate -mt-px rounded-b-[1.75rem] bg-vitrine-nuit sm:rounded-b-[2.5rem]"
+      className="relative isolate mx-3 -mt-px rounded-b-[1.75rem] bg-vitrine-nuit sm:mx-5 sm:rounded-b-[2.5rem] lg:mx-6"
     >
       {/* Classe « dark » : couleurs de type et accent en version sombre. */}
       {/* Espacements resserrés, et un filet discret qui sépare le nuancier
@@ -50,12 +51,14 @@ export default function VitrineNuancierTypes({ comptes }) {
       <div className="dark px-4 sm:px-6 lg:px-10">
         <div className="mx-auto max-w-7xl border-t border-white/10 pt-8 pb-12 sm:pt-10 sm:pb-16 lg:pb-20">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-            <div>
-              <p className="text-index tracking-[0.04em] text-vitrine-brume uppercase">Nuancier des types</p>
-              <h2 id="titre-nuancier" className="titre-section mt-3 max-w-[16ch] text-vitrine-os">
-                Dix-huit types, une seule <span className="mot-cle">palette</span>.
-              </h2>
-            </div>
+            <TitreVitrine
+              id="titre-nuancier"
+              surtitre="Nuancier des types"
+              debut="Dix-huit types, une seule"
+              motCle="palette"
+              surtitreClassName="text-vitrine-brume"
+              titreClassName="max-w-[16ch] text-vitrine-os"
+            />
             <p className="max-w-sm text-base leading-relaxed text-pretty text-vitrine-brume">
               Chaque segment est proportionnel au nombre de Pokémon du type. Un
               Pokémon à deux types compte deux fois. Choisissez un type pour
