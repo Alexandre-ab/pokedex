@@ -82,7 +82,8 @@ export default function PokemonCard({ pokemon }) {
         ))}
       </div>
 
-      {/* 4. Actions : deux boutons égaux et confortables. */}
+      {/* 4. Actions : deux boutons égaux et confortables, transparents au
+          repos (la carte reste légère) ; leur fond se révèle au survol. */}
       <div className="mt-auto grid grid-cols-2 gap-2 px-3 pb-3">
         <FavoriteButton id={id} />
         <TeamButton id={id} />

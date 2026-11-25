@@ -44,8 +44,11 @@ export default function FavoriteButton({ id, showLabel = false }) {
     );
   }
 
-  // Version compacte (cartes de la grille) : un bouton arrondi
-  // de la carte — pleine largeur, 44 px de haut, icône seule. Le libellé reste lu par les lecteurs d'écran (aria-label).
+  // Version compacte (cartes de la grille) : pleine largeur, 44 px de haut,
+  // icône seule. Au repos, fond transparent (carte plus légère) ; le fond
+  // apparaît au survol de la carte (group-hover), du bouton (hover) ou
+  // quand le Pokémon est favori (data-actif). L'icône garde le contraste
+  // de muted-foreground. Le libellé reste lu par les lecteurs d'écran.
   return (
     <Button
       type="button"
@@ -55,7 +58,7 @@ export default function FavoriteButton({ id, showLabel = false }) {
       // data-actif sert au style (le libellé dit déjà l'état).
       data-actif={estFavori ? "true" : undefined}
       title={libelle}
-      className="min-h-11 w-full rounded-xl bg-accent/60 text-muted-foreground hover:bg-accent hover:text-foreground data-[actif=true]:bg-primary/10 data-[actif=true]:text-primary"
+      className="min-h-11 w-full rounded-xl bg-transparent text-muted-foreground not-data-[actif=true]:group-hover:bg-accent/40 hover:bg-accent hover:text-foreground motion-safe:transition-colors data-[actif=true]:bg-primary/10 data-[actif=true]:text-primary"
     >
       <Heart className={estFavori ? "fill-current" : ""} />
     </Button>

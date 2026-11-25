@@ -99,17 +99,40 @@ export default function HeroLentille({ specimens, total }) {
   const lentillePrete = utiliseLentille && etatCanvas === "pret";
   const modeAuto = utiliseLentille && tactile;
 
+  // Micro-indice sur une seule ligne, sous le spécimen : discret, il dit
+  // juste comment jouer avec la lentille selon l'appareil.
   const consigne = !utiliseLentille
-    ? "Utilisez le bouton pour comparer l'illustration normale et la variante chromatique."
+    ? "Comparez normal et chromatique"
     : modeAuto
-      ? "La lentille se promène sur le spécimen et révèle sa variante chromatique."
-      : "Survolez le spécimen : la lentille révèle sa variante chromatique.";
+      ? "Balayage chromatique autonome"
+      : "Survolez le spécimen · Chromatique";
 
   return (
     <section
       aria-labelledby="titre-vitrine"
       className="relative isolate grid min-h-[calc(100svh-4rem)] grid-cols-1 gap-y-6 overflow-clip px-4 pt-4 pb-24 [grid-template-areas:'titre'_'scene'_'carte'] sm:px-6 lg:min-h-[100svh] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[1fr_auto] lg:gap-x-10 lg:px-10 lg:py-10 lg:[grid-template-areas:'titre_scene'_'carte_scene']"
     >
+      {/* Motif de fond décoratif : quelques anneaux organiques très pâles
+          (4 à 5 % de l'encre) qui ancrent le hero dans la page sans
+          l'alourdir. SVG pur (aucun JS), ignoré des lecteurs d'écran et
+          des clics. -z-20 : sous l'aura et le numéro géant. */}
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        viewBox="0 0 1200 800"
+        preserveAspectRatio="xMidYMid slice"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        className="pointer-events-none absolute inset-0 -z-20 size-full text-foreground/[0.04] dark:text-foreground/[0.05]"
+      >
+        <ellipse cx="820" cy="380" rx="520" ry="300" transform="rotate(-12 820 380)" />
+        <ellipse cx="820" cy="380" rx="400" ry="225" transform="rotate(-8 820 380)" />
+        <ellipse cx="820" cy="380" rx="285" ry="160" transform="rotate(-4 820 380)" />
+        <path d="M-40 650 C 220 560, 420 760, 700 680 S 1080 520, 1260 600" />
+        <path d="M-40 710 C 240 630, 440 820, 720 740 S 1100 590, 1260 670" />
+      </svg>
+
       {/* ================= Titre + accès au catalogue ================= */}
       <div className="relative z-10 flex flex-col items-start [grid-area:titre]">
         <p className="text-index tracking-[0.04em] text-muted-foreground uppercase">
@@ -223,7 +246,9 @@ export default function HeroLentille({ specimens, total }) {
 
         {/* Commandes de la lentille, sous le spécimen. */}
         <div className="relative z-10 flex flex-col items-center gap-3 text-center">
-          <p className="max-w-xs text-sm text-pretty text-muted-foreground">{consigne}</p>
+          <p className="text-index tracking-[0.04em] whitespace-nowrap text-muted-foreground">
+            {consigne}
+          </p>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <button
               type="button"
