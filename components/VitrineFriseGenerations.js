@@ -11,6 +11,7 @@ import {
   useTransform,
 } from "motion/react";
 import { illustrationNormale, numeroSurQuatre } from "@/lib/vitrine";
+import TitreVitrine from "@/components/TitreVitrine";
 
 // Écran large (lg, 1024 px) : lu avec useSyncExternalStore. Le serveur et le
 // premier rendu client supposent « pas large » (piste native, même HTML :
@@ -111,20 +112,19 @@ export default function VitrineFriseGenerations({ generations }) {
       <div
         className={
           epinglee
-            ? "sticky top-0 flex h-svh flex-col justify-center gap-8 overflow-clip py-10"
+            ? "sticky top-0 flex h-svh flex-col justify-center gap-8 overflow-clip py-10 lg:pt-20"
             : "flex flex-col gap-8"
         }
       >
         <header className="px-4 sm:px-6 lg:px-10">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-            <div>
-              <p className="text-index tracking-[0.04em] text-muted-foreground uppercase">
-                Frise des générations
-              </p>
-              <h2 id="titre-frise" className="titre-section mt-3 max-w-[18ch] text-foreground">
-                Neuf régions, une seule <span className="mot-cle">numérotation</span>.
-              </h2>
-            </div>
+            <TitreVitrine
+              id="titre-frise"
+              surtitre="Frise des générations"
+              debut="Neuf régions, une seule"
+              motCle="numérotation"
+              titreClassName="max-w-[18ch] text-foreground"
+            />
             <p className="max-w-sm text-base leading-relaxed text-pretty text-muted-foreground">
               Chaque génération ajoute une région, et les numéros reprennent là où la
               précédente s&apos;arrête.{" "}

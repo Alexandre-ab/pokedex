@@ -50,10 +50,11 @@ export default function VitrineManifeste({ total, nombreTypes, nombreGenerations
     // Le fond « nuit » suit le thème (#14161F en clair, #1A1D27 en sombre).
     // Coins arrondis en haut : la nuit se pose sur le papier comme une
     // carte. Le nuancier des types (juste dessous) la prolonge et porte les
-    // coins arrondis du bas.
+    // coins arrondis du bas. Marges latérales (mx-*) : les coins arrondis
+    // respirent sur le papier au lieu de toucher les bords de la fenêtre.
     <section
       aria-labelledby="titre-manifeste"
-      className="relative isolate rounded-t-[1.75rem] bg-vitrine-nuit sm:rounded-t-[2.5rem]"
+      className="relative isolate mx-3 rounded-t-[1.75rem] bg-vitrine-nuit sm:mx-5 sm:rounded-t-[2.5rem] lg:mx-6"
     >
       {/* Classe « dark » : à l'intérieur, tous les tokens prennent leur
           valeur sombre (accent #FF5A6E lisible sur la nuit).

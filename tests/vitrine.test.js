@@ -15,6 +15,7 @@ import {
   RECORDS_VITRINE,
   valeurRecord,
   formaterRecord,
+  EVENEMENT_FOCUS_RECHERCHE,
 } from '../lib/vitrine.js';
 
 const source = (path) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
@@ -45,6 +46,10 @@ describe('contrats du Hero Lentille', () => {
   it('ne force pas min-h-screen et ne duplique pas les transitions des illustrations', () => {
     expect(hero).not.toContain('min-h-screen');
     expect(hero).not.toMatch(/ViewTransition\s+name=["']pokemon-image-/);
+  });
+
+  it('marque le motif SVG de fond comme décoratif et inaccessible au focus', () => {
+    expect(hero).toMatch(/<svg\s+aria-hidden="true"\s+focusable="false"[\s\S]*?<\/svg>/);
   });
 
   it('charge le canvas dynamiquement sans SSR et borne le DPR', () => {
@@ -155,6 +160,48 @@ describe('contrats de la page d’accueil et de navigation', () => {
 
   it('garde usePathname sous Suspense dans le Header', () => {
     expect(header).toMatch(/<Suspense\b[\s\S]*?HeaderAvecChemin[\s\S]*?<\/Suspense>/);
+    expect(header).toMatch(/function HeaderAvecChemin\s*\([^)]*\)\s*\{[\s\S]*?usePathname\(\)/);
+    expect(header).toMatch(/export default function Header\s*\([^)]*\)\s*\{\s*return\s*\(\s*<Suspense\b[\s\S]*?<HeaderAvecChemin[\s\S]*?<\/Suspense>/);
+  });
+
+  it('compacte la navbar avec un listener scroll passif, nettoyé au démontage', () => {
+    expect(header).toMatch(/addEventListener\(\s*["']scroll["']\s*,\s*verifier\s*,\s*\{\s*passive:\s*true\s*\}\s*\)/);
+    expect(header).toMatch(/removeEventListener\(\s*["']scroll["']\s*,\s*verifier\s*\)/);
+    expect(header).toMatch(/return\s*\(\)\s*=>\s*\{[\s\S]*?removeEventListener\(\s*["']scroll["']\s*,\s*verifier\s*\)/);
+  });
+
+  it('utilise deux seuils distincts pour l’hystérésis et évite les effets visuels demandés', () => {
+    expect(header).toMatch(/const SEUIL_COMPACT\s*=\s*(\d+)/);
+    expect(header).toMatch(/const SEUIL_LARGE\s*=\s*(\d+)/);
+    const seuilCompact = Number(header.match(/const SEUIL_COMPACT\s*=\s*(\d+)/)?.[1]);
+    const seuilLarge = Number(header.match(/const SEUIL_LARGE\s*=\s*(\d+)/)?.[1]);
+    expect(seuilCompact).toBeGreaterThan(seuilLarge);
+    expect(header).not.toContain('backdrop-blur');
+    expect(header).not.toContain('ring-ring/50');
+  });
+
+  it('décale le contenu sous la navbar haute sur desktop', () => {
+    const layout = source('../app/layout.js');
+    expect(layout).toContain('lg:pt-16');
+    expect(layout).not.toContain('lg:pl-rail');
+  });
+
+  it('garde la recherche non sticky et permet de la focaliser par événement ou raccourci', () => {
+    const grid = source('../components/PokemonGrid.js');
+    expect(grid).not.toMatch(/className=["'`][^"'`]*\bsticky\b/);
+    expect(grid).toContain('window.addEventListener(EVENEMENT_FOCUS_RECHERCHE, allerALaRecherche)');
+    expect(grid).toContain('window.removeEventListener(EVENEMENT_FOCUS_RECHERCHE, allerALaRecherche)');
+    expect(grid).toContain('window.addEventListener("keydown", surTouche)');
+    expect(grid).toContain('window.removeEventListener("keydown", surTouche)');
+    expect(grid).toContain('if (event.key !== "/") return');
+    expect(grid).toContain('if (saisieEnCours()) return');
+    expect(EVENEMENT_FOCUS_RECHERCHE).toBe('pokedex:focus-search');
+    expect(source('../lib/vitrine.js')).toContain('export const EVENEMENT_FOCUS_RECHERCHE = "pokedex:focus-search"');
+    expect(source('../components/Header.js')).toMatch(/aria-label="Rechercher un Pokémon"/);
+    expect(source('../components/Header.js')).toContain('window.dispatchEvent(new CustomEvent(EVENEMENT_FOCUS_RECHERCHE))');
+    expect(source('../components/Header.js')).toContain('router.push("/#catalogue")');
+    expect(source('../components/VitrineFriseGenerations.js')).toContain('lg:pt-20');
+    expect(page).toContain('lg:scroll-mt-20');
   });
 
   it('préserve les principaux contrats d’accessibilité et transitions', () => {
@@ -166,7 +213,10 @@ describe('contrats de la page d’accueil et de navigation', () => {
 });
 
 describe('nuancier des types et records', () => {
+  const manifeste = source('../components/VitrineManifeste.js');
   const nuancier = source('../components/VitrineNuancierTypes.js');
+  const titreVitrine = source('../components/TitreVitrine.js');
+  const frise = source('../components/VitrineFriseGenerations.js');
   const records = source('../components/VitrineRecords.js');
   const grid = source('../components/PokemonGrid.js');
   const page = source('../app/page.js');
@@ -220,6 +270,48 @@ describe('nuancier des types et records', () => {
     expect(records).not.toContain('pokemon-image-');
     expect(records).toContain('records.map');
     expect(records).toContain('aria-labelledby="titre-records"');
+  });
+
+  it('respecte le contrat du titre animé et conserve son masque interne', () => {
+    expect(titreVitrine).toContain('useReducedMotion');
+    expect(titreVitrine).toMatch(/initial=\{reduit\s*\?\s*false\s*:\s*"cache"\}/);
+    expect(titreVitrine).toMatch(/viewport=\{\{\s*once:\s*true\s*,\s*amount:\s*0\.35\s*\}\}/);
+    expect(titreVitrine).toMatch(/<h2\b[^>]*>[\s\S]*?<span className="block overflow-clip pb-\[0\.1em\]">[\s\S]*?<\/h2>/);
+    expect(titreVitrine).not.toMatch(/<h2\b[^>]*className="[^"]*overflow-clip/);
+  });
+
+  it('branche le titre dans les sections vitrine et le catalogue', () => {
+    for (const component of [nuancier, frise, records, page]) {
+      expect(component).toContain('import TitreVitrine from "@/components/TitreVitrine"');
+      expect(component).toMatch(/<TitreVitrine\b/);
+    }
+    expect(records).not.toMatch(/^\s*["']use client["']/);
+  });
+
+  it('garde des marges latérales aux trois blocs sombres de la vitrine', () => {
+    expect(manifeste).toMatch(/className="[^"]*\bmx-3\b[^"]*bg-vitrine-nuit/);
+    expect(nuancier).toMatch(/className="[^"]*\bmx-3\b[^"]*bg-vitrine-nuit/);
+    expect(records).toMatch(/className="[^"]*\bmx-3\b[^"]*bg-vitrine-abysse/);
+  });
+
+  it('lie l’illustration détaillée au contrat chromatique et à la transition partagée', () => {
+    const artwork = source('../components/PokemonDetailArtwork.js');
+    expect(artwork).toContain('illustrationChromatique(id)');
+    expect(artwork).toMatch(/<ViewTransition\s+name=\{`pokemon-image-\$\{id\}`\}/);
+    expect(artwork).toContain('aria-pressed={chromatique}');
+    expect(artwork).toContain('onError={gererErreurShiny}');
+    expect(artwork).toContain('setIndisponible(true)');
+    expect(artwork).toContain('setChromatique(false)');
+    expect(artwork).toContain('motion-safe:');
+  });
+
+  it('intègre l’illustration dans une page non-async suspendue avec CardTransition', () => {
+    const detailPage = source('../app/pokemon/[id]/page.js');
+    expect(detailPage).toContain('import PokemonDetailArtwork from "@/components/PokemonDetailArtwork"');
+    expect(detailPage).toMatch(/export default function PokemonPage\(/);
+    expect(detailPage).not.toMatch(/export default async function PokemonPage\(/);
+    expect(detailPage).toMatch(/<Suspense\b[\s\S]*?<PokemonDetail paramsPromise=\{params\}\s*\/>[\s\S]*?<\/Suspense>/);
+    expect(detailPage).toMatch(/<CardTransition\b[\s\S]*?<PokemonDetailArtwork\b/);
   });
 
   it('place les sections dans l’ordre attendu jusqu’au catalogue', () => {

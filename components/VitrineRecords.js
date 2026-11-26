@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Aperture } from "lucide-react";
 import { TYPE_STYLES } from "@/lib/typeStyles";
 import { illustrationNormale, numeroSurQuatre, separerMilliers } from "@/lib/vitrine";
+import TitreVitrine from "@/components/TitreVitrine";
 
 // ---------------------------------------------------------------------------
 // Panthéon des records (section « abysse », la plus profonde de la page).
@@ -23,19 +24,23 @@ export default function VitrineRecords({ records, total }) {
   return (
     <section
       aria-labelledby="titre-records"
-      className="relative isolate rounded-[1.75rem] bg-vitrine-abysse sm:rounded-[2.5rem]"
+      className="relative isolate mx-3 rounded-[1.75rem] bg-vitrine-abysse sm:mx-5 sm:rounded-[2.5rem] lg:mx-6"
     >
       {/* Classe « dark » : tokens en version sombre (accent #FF5A6E, 6,46:1
           sur l'abysse ; couleurs de type sombres pour les pastilles). */}
       <div className="dark px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-            <div>
-              <p className="text-index tracking-[0.04em] text-vitrine-brume uppercase">Panthéon des records</p>
-              <h2 id="titre-records" className="titre-section mt-3 max-w-[16ch] text-vitrine-os">
-                Six records, un seul <span className="mot-cle">panthéon</span>.
-              </h2>
-            </div>
+            {/* TitreVitrine est un composant client : ce composant serveur
+                le rend directement, seul le titre est hydraté. */}
+            <TitreVitrine
+              id="titre-records"
+              surtitre="Panthéon des records"
+              debut="Six records, un seul"
+              motCle="panthéon"
+              surtitreClassName="text-vitrine-brume"
+              titreClassName="max-w-[16ch] text-vitrine-os"
+            />
             <p className="max-w-sm text-base leading-relaxed text-pretty text-vitrine-brume">
               Les champions de chaque mesure parmi les {separerMilliers(total)} espèces, d&apos;après
               les statistiques de base de PokéAPI.

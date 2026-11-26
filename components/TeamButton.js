@@ -54,7 +54,9 @@ export default function TeamButton({ id, showLabel = false }) {
   }
 
   // Version compacte (cartes de la grille) : un bouton arrondi
-  // de la carte — pleine largeur, 44 px de haut, icône seule.
+  // de la carte — pleine largeur, 44 px de haut, icône seule. Au repos,
+  // fond transparent ; il apparaît au survol (carte ou bouton) et quand le
+  // Pokémon est dans la sacoche (data-actif).
   // Le libellé reste lu par les lecteurs d'écran (aria-label).
   return (
     <Button
@@ -65,7 +67,7 @@ export default function TeamButton({ id, showLabel = false }) {
       // data-actif sert au style (le libellé dit déjà l'état).
       data-actif={estDansLaSacoche ? "true" : undefined}
       title={libelle}
-      className="min-h-11 w-full rounded-xl bg-accent/60 text-muted-foreground hover:bg-accent hover:text-foreground data-[actif=true]:bg-primary data-[actif=true]:text-primary-foreground data-[actif=true]:hover:bg-primary/85 data-[actif=true]:hover:text-primary-foreground"
+      className="min-h-11 w-full rounded-xl bg-transparent text-muted-foreground not-data-[actif=true]:group-hover:bg-accent/40 hover:bg-accent hover:text-foreground motion-safe:transition-colors data-[actif=true]:bg-primary data-[actif=true]:text-primary-foreground data-[actif=true]:hover:bg-primary/85 data-[actif=true]:hover:text-primary-foreground"
     >
       <Backpack />
     </Button>

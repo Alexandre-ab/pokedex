@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search, ChevronDown, X, Check } from "lucide-react";
 import { searchPokemon, filterByType } from "@/lib/filters";
 import { TYPE_STYLES } from "@/lib/typeStyles";
-import { EVENEMENT_CHOIX_TYPE } from "@/lib/vitrine";
+import { EVENEMENT_CHOIX_TYPE, EVENEMENT_FOCUS_RECHERCHE } from "@/lib/vitrine";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,6 +45,53 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
     window.addEventListener(EVENEMENT_CHOIX_TYPE, surChoixType);
     return () => window.removeEventListener(EVENEMENT_CHOIX_TYPE, surChoixType);
   }, [typeMap]);
+
+  // Deux façons d'aller directement à la recherche :
+  // - le bouton loupe de la navbar envoie « pokedex:focus-search » ;
+  // - la touche « / » du clavier (raccourci classique des sites web).
+  // Dans les deux cas : on remonte en douceur jusqu'au catalogue, puis on
+  // place le curseur dans le champ (preventScroll : pas de 2e saut).
+  useEffect(() => {
+    function allerALaRecherche() {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      document.getElementById("catalogue")?.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+      champRef.current?.focus({ preventScroll: true });
+    }
+
+    // Vrai si l'utilisateur est déjà en train d'écrire quelque part :
+    // dans ce cas, « / » doit rester un simple caractère.
+    function saisieEnCours() {
+      const element = document.activeElement;
+      if (!element) return false;
+      const balise = element.tagName;
+      return (
+        balise === "INPUT" ||
+        balise === "TEXTAREA" ||
+        balise === "SELECT" ||
+        element.isContentEditable
+      );
+    }
+
+    function surTouche(event) {
+      if (event.key !== "/") return;
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (saisieEnCours()) return;
+      event.preventDefault(); // n'écrit pas « / » dans le champ
+      allerALaRecherche();
+    }
+
+    window.addEventListener(EVENEMENT_FOCUS_RECHERCHE, allerALaRecherche);
+    window.addEventListener("keydown", surTouche);
+    return () => {
+      window.removeEventListener(EVENEMENT_FOCUS_RECHERCHE, allerALaRecherche);
+      window.removeEventListener("keydown", surTouche);
+    };
+  }, []);
 
   // Nom français d'un type (repli sur l'identifiant de l'API).
   const typeLabel = (type) => TYPE_STYLES[type]?.label ?? type;
@@ -88,11 +135,14 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
 
   return (
     <div>
-      {/* ============ Barre de recherche (reste visible au défilement) ============ */}
-      <div className="z-20 bg-background pt-3 pb-5 sm:sticky sm:top-4 sm:pt-0">
+      {/* ============ Barre de recherche (en haut du catalogue) ============ */}
+      {/* Posée naturellement dans le flux (non collante) : elle ne recouvre
+          jamais les cartes quand on descend. Pour y revenir d'un clic :
+          bouton loupe de la navbar, ou touche « / » (voir plus haut). */}
+      <div className="pt-3 pb-6 sm:pt-0">
         <div
           role="search"
-          className="flex flex-wrap items-center gap-2 rounded-2xl bg-card p-2 shadow-soft dark:ring-1 dark:ring-border sm:flex-nowrap"
+          className="flex flex-wrap items-center gap-2 rounded-2xl bg-card p-2 shadow-soft dark:ring-1 dark:ring-border sm:flex-nowrap lg:mx-auto lg:max-w-3xl lg:rounded-full lg:p-1.5"
         >
           {/* --- Champ de recherche --- */}
           <label htmlFor="pokemon-search" className="sr-only">
@@ -112,14 +162,14 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Nom ou numéro, ex. Pikachu, 25"
-              className="min-h-11 flex-1 rounded-xl border border-input bg-background pr-12 pl-10 text-base shadow-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring dark:bg-background"
+              className="min-h-11 flex-1 rounded-xl border border-input lg:rounded-full bg-background pr-12 pl-10 text-base shadow-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring dark:bg-background"
             />
             {rechercheActive && (
               <button
                 type="button"
                 onClick={effacerRecherche}
                 aria-label="Effacer la recherche"
-                className="absolute right-0 flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+                className="absolute right-0 flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent lg:rounded-full hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
@@ -133,7 +183,7 @@ export default function PokemonGrid({ pokemonList, types, typeMap }) {
                 render={
                   <Button
                     variant="ghost"
-                    className="min-h-11 gap-2 rounded-2xl bg-accent/60 px-4 text-sm hover:bg-accent aria-expanded:bg-accent"
+                    className="min-h-11 gap-2 rounded-2xl bg-accent/60 px-4 lg:rounded-full text-sm hover:bg-accent aria-expanded:bg-accent"
                   />
                 }
                 aria-label={
