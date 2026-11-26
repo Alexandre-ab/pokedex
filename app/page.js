@@ -118,7 +118,7 @@ export default async function Home() {
         <section
           id="catalogue"
           aria-labelledby="titre-catalogue"
-          className="scroll-mt-4 px-4 pt-6 pb-10 sm:px-6 lg:px-10 lg:pt-10"
+          className="scroll-mt-4 lg:scroll-mt-20 px-4 pt-6 pb-10 sm:px-6 lg:px-10 lg:pt-10"
         >
           <div className="mx-auto max-w-7xl">
             {/* En-tête : même voix éditoriale que les sections de la vitrine

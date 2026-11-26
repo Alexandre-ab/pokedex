@@ -112,7 +112,7 @@ export default function VitrineFriseGenerations({ generations }) {
       <div
         className={
           epinglee
-            ? "sticky top-0 flex h-svh flex-col justify-center gap-8 overflow-clip py-10"
+            ? "sticky top-0 flex h-svh flex-col justify-center gap-8 overflow-clip py-10 lg:pt-20"
             : "flex flex-col gap-8"
         }
       >

@@ -63,13 +63,14 @@ export default async function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {/* Header = rail latéral fixe (desktop) + bandeau et dock (mobile). */}
+          {/* Header = navbar haute rétractable (desktop) + bandeau et dock (mobile). */}
           <Header namesById={namesById} />
           {/* Zone principale : chaque page y rend son propre
-              <main id="main-content">. On la décale de la largeur du rail
-              en desktop (lg:pl-rail), et on lui laisse de la place en bas
-              en mobile pour ne pas passer sous le dock flottant. */}
-          <div className="flex flex-1 flex-col pb-28 lg:pb-0 lg:pl-rail">
+              <main id="main-content">. En desktop, on la décale une fois pour
+              toutes de la hauteur de la navbar (lg:pt-16 = 64 px) : quand
+              elle se contracte en pilule au scroll, rien ne saute. En
+              mobile, on laisse de la place en bas pour le dock flottant. */}
+          <div className="flex flex-1 flex-col pb-28 lg:pb-0 lg:pt-16">
             {children}
           </div>
           {/* Sur mobile, les toasts s'affichent au-dessus du dock. */}

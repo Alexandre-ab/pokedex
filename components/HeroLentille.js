@@ -110,7 +110,7 @@ export default function HeroLentille({ specimens, total }) {
   return (
     <section
       aria-labelledby="titre-vitrine"
-      className="relative isolate grid min-h-[calc(100svh-4rem)] grid-cols-1 gap-y-6 overflow-clip px-4 pt-4 pb-24 [grid-template-areas:'titre'_'scene'_'carte'] sm:px-6 lg:min-h-[100svh] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[1fr_auto] lg:gap-x-10 lg:px-10 lg:py-10 lg:[grid-template-areas:'titre_scene'_'carte_scene']"
+      className="relative isolate grid min-h-[calc(100svh-4rem)] grid-cols-1 gap-y-6 overflow-clip px-4 pt-4 pb-24 [grid-template-areas:'titre'_'scene'_'carte'] sm:px-6 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[1fr_auto] lg:gap-x-10 lg:px-10 lg:py-10 lg:[grid-template-areas:'titre_scene'_'carte_scene']"
     >
       {/* Motif de fond décoratif : quelques anneaux organiques très pâles
           (4 à 5 % de l'encre) qui ancrent le hero dans la page sans
