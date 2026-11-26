@@ -15,6 +15,7 @@ import {
   RECORDS_VITRINE,
   valeurRecord,
   formaterRecord,
+  EVENEMENT_FOCUS_RECHERCHE,
 } from '../lib/vitrine.js';
 
 const source = (path) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
@@ -159,6 +160,48 @@ describe('contrats de la page d’accueil et de navigation', () => {
 
   it('garde usePathname sous Suspense dans le Header', () => {
     expect(header).toMatch(/<Suspense\b[\s\S]*?HeaderAvecChemin[\s\S]*?<\/Suspense>/);
+    expect(header).toMatch(/function HeaderAvecChemin\s*\([^)]*\)\s*\{[\s\S]*?usePathname\(\)/);
+    expect(header).toMatch(/export default function Header\s*\([^)]*\)\s*\{\s*return\s*\(\s*<Suspense\b[\s\S]*?<HeaderAvecChemin[\s\S]*?<\/Suspense>/);
+  });
+
+  it('compacte la navbar avec un listener scroll passif, nettoyé au démontage', () => {
+    expect(header).toMatch(/addEventListener\(\s*["']scroll["']\s*,\s*verifier\s*,\s*\{\s*passive:\s*true\s*\}\s*\)/);
+    expect(header).toMatch(/removeEventListener\(\s*["']scroll["']\s*,\s*verifier\s*\)/);
+    expect(header).toMatch(/return\s*\(\)\s*=>\s*\{[\s\S]*?removeEventListener\(\s*["']scroll["']\s*,\s*verifier\s*\)/);
+  });
+
+  it('utilise deux seuils distincts pour l’hystérésis et évite les effets visuels demandés', () => {
+    expect(header).toMatch(/const SEUIL_COMPACT\s*=\s*(\d+)/);
+    expect(header).toMatch(/const SEUIL_LARGE\s*=\s*(\d+)/);
+    const seuilCompact = Number(header.match(/const SEUIL_COMPACT\s*=\s*(\d+)/)?.[1]);
+    const seuilLarge = Number(header.match(/const SEUIL_LARGE\s*=\s*(\d+)/)?.[1]);
+    expect(seuilCompact).toBeGreaterThan(seuilLarge);
+    expect(header).not.toContain('backdrop-blur');
+    expect(header).not.toContain('ring-ring/50');
+  });
+
+  it('décale le contenu sous la navbar haute sur desktop', () => {
+    const layout = source('../app/layout.js');
+    expect(layout).toContain('lg:pt-16');
+    expect(layout).not.toContain('lg:pl-rail');
+  });
+
+  it('garde la recherche non sticky et permet de la focaliser par événement ou raccourci', () => {
+    const grid = source('../components/PokemonGrid.js');
+    expect(grid).not.toMatch(/className=["'`][^"'`]*\bsticky\b/);
+    expect(grid).toContain('window.addEventListener(EVENEMENT_FOCUS_RECHERCHE, allerALaRecherche)');
+    expect(grid).toContain('window.removeEventListener(EVENEMENT_FOCUS_RECHERCHE, allerALaRecherche)');
+    expect(grid).toContain('window.addEventListener("keydown", surTouche)');
+    expect(grid).toContain('window.removeEventListener("keydown", surTouche)');
+    expect(grid).toContain('if (event.key !== "/") return');
+    expect(grid).toContain('if (saisieEnCours()) return');
+    expect(EVENEMENT_FOCUS_RECHERCHE).toBe('pokedex:focus-search');
+    expect(source('../lib/vitrine.js')).toContain('export const EVENEMENT_FOCUS_RECHERCHE = "pokedex:focus-search"');
+    expect(source('../components/Header.js')).toMatch(/aria-label="Rechercher un Pokémon"/);
+    expect(source('../components/Header.js')).toContain('window.dispatchEvent(new CustomEvent(EVENEMENT_FOCUS_RECHERCHE))');
+    expect(source('../components/Header.js')).toContain('router.push("/#catalogue")');
+    expect(source('../components/VitrineFriseGenerations.js')).toContain('lg:pt-20');
+    expect(page).toContain('lg:scroll-mt-20');
   });
 
   it('préserve les principaux contrats d’accessibilité et transitions', () => {
