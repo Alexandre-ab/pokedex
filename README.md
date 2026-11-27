@@ -44,6 +44,24 @@ npm run lint
 npm run build
 ```
 
+### Avec `just` (optionnel)
+
+[`just`](https://github.com/casey/just) est un lanceur de commandes : le `justfile` à la racine regroupe les mêmes commandes `npm` sous des noms courts.
+
+```bash
+# Lister les commandes disponibles
+just
+
+# Lancer le serveur de développement
+just dev
+
+# Tests puis lint (vérification complète avant commit)
+just check
+
+# Construire la version de production
+just build
+```
+
 ## Site en ligne
 
 Déployé sur Vercel : [https://pokedex-delta-wine.vercel.app](https://pokedex-delta-wine.vercel.app)
